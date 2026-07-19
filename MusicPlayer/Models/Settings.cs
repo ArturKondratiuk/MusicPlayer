@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MusicPlayer.Models
+namespace MusicPlayer.Models;
+
+public class Settings
 {
-    internal class Settings
-    {
-    }
+    public bool DarkMode { get; set; }
+
+    public string DefaultSort { get; set; } = "Title";
 }

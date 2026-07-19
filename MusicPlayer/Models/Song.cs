@@ -4,9 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MusicPlayer.Models
+namespace MusicPlayer.Models;
+
+public class Song
 {
-    internal class Song
-    {
-    }
+    public string FilePath { get; set; } = "";
+
+    public string Title { get; set; } = "";
+
+    public string Artist { get; set; } = "";
+
+    public string Album { get; set; } = "";
+
+    public string Duration { get; set; } = "";
+
+    public string AlbumArtUrl { get; set; } = "";
 }
