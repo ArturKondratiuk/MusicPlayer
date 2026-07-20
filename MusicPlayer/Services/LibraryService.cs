@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicPlayer.Models;
+
 
 namespace MusicPlayer.Services
 {
-    internal class MusicLibraryService
+    public class LibraryService
     {
+        public List<Song> Songs { get; } = new();
     }
 }
