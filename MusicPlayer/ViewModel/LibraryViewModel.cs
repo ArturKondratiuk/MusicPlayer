@@ -7,8 +7,8 @@ public class LibraryViewModel : BaseViewModel
 {
     public ObservableCollection<Song> Songs { get; } = new();
 
-    public LibraryViewModel()
+    public void AddSong(Song song)
     {
-
+        Songs.Add(song);
     }
 }

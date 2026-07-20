@@ -17,9 +17,15 @@
         <SearchBar
             Placeholder="Search songs..." />
 
+        <Button
+        x:Name="AddMusicButton"
+        Margin="0,15,0,0"
+        Clicked="AddMusicButton_Clicked"
+        Text="Add Music" />
+
         <CollectionView
-    Margin="0,20,0,0"
-    ItemsSource="{Binding Songs}">
+        Margin="0,20,0,0"
+        ItemsSource="{Binding Songs}">
 
             <CollectionView.ItemTemplate>
 
