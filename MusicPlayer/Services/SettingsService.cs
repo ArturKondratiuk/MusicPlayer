@@ -9,6 +9,6 @@ namespace MusicPlayer.Services
 {
     internal class SettingsService
     {
-        public AppSettings Settings { get; } = new();
+        public Settings Settings { get; } = new();
     }
 }

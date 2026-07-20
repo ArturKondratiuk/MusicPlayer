@@ -7,10 +7,6 @@
     xmlns:viewmodels="clr-namespace:MusicPlayer.ViewModels"
     Title="Library">
 
-    <ContentPage.BindingContext>
-        <viewmodels:LibraryViewModel/>
-    </ContentPage.BindingContext>
-
     <VerticalStackLayout Padding="20">
 
         <Label

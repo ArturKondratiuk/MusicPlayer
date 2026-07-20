@@ -1,9 +1,12 @@
+using MusicPlayer.ViewModels;
+
 namespace MusicPlayer.Pages;
 
 public partial class LibraryPage : ContentPage
 {
-    public LibraryPage()
+    public LibraryPage(LibraryViewModel viewModel)
     {
         InitializeComponent();
+        BindingContext = viewModel;
     }
 }
