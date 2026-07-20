@@ -25,12 +25,6 @@ namespace MusicPlayer
             builder.Services.AddSingleton<SettingsService>();
 
             builder.Services.AddSingleton<LibraryViewModel>();
-
-            builder.Services.AddSingleton<LibraryPage>();
-
-            builder.Services.AddSingleton<NowPlayingPage>();
-            builder.Services.AddSingleton<PlaylistsPage>();
-            builder.Services.AddSingleton<SettingsPage>();
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
