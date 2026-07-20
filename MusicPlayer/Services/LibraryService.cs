@@ -5,11 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using MusicPlayer.Models;
 
+namespace MusicPlayer.Services;
 
-namespace MusicPlayer.Services
+public class LibraryService
 {
-    public class LibraryService
+    private readonly JsonService jsonService = new();
+
+    private readonly string filePath =
+        Path.Combine(FileSystem.AppDataDirectory, "library.json");
+
+    public async Task SaveLibraryAsync(List<Song> songs)
     {
-        public List<Song> Songs { get; } = new();
+        await jsonService.SaveAsync(filePath, songs);
+    }
+
+    public async Task<List<Song>> LoadLibraryAsync()
+    {
+        var songs = await jsonService.LoadAsync<List<Song>>(filePath);
+
+        return songs ?? new List<Song>();
     }
 }
