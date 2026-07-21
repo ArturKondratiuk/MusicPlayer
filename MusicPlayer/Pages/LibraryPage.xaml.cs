@@ -1,3 +1,4 @@
+using Id3;
 using Microsoft.Maui.Storage;
 using MusicPlayer.Models;
 using MusicPlayer.Services;
@@ -9,6 +10,8 @@ public partial class LibraryPage : ContentPage
 {
     private readonly LibraryViewModel viewModel = new();
     private readonly LibraryService libraryService = new();
+    private readonly Id3Service id3Service = new();
+
     public LibraryPage()
     {
         InitializeComponent();
@@ -29,19 +32,14 @@ public partial class LibraryPage : ContentPage
         if (result == null)
             return;
 
-        Song song = new Song
-        {
-            FilePath = result.FullPath,
-            Title = Path.GetFileNameWithoutExtension(result.FileName),
-            Artist = "Unknown Artist",
-            Album = "Unknown Album"
-        };
+        Song song = id3Service.ReadSong(result.FullPath);
 
         viewModel.AddSong(song);
         await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
     }
     private async Task LoadLibraryAsync()
     {
+        viewModel.Songs.Clear();
         var songs = await libraryService.LoadLibraryAsync();
 
         foreach (var song in songs)

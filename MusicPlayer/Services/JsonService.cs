@@ -25,8 +25,15 @@ public class JsonService
         if (!File.Exists(filePath))
             return default;
 
-        string json = await File.ReadAllTextAsync(filePath);
+        try
+        {
+            string json = await File.ReadAllTextAsync(filePath);
 
-        return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json);
+        }
+        catch
+        {
+            return default;
+        }
     }
 }

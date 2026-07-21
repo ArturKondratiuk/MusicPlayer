@@ -16,7 +16,7 @@ public class Song
 
     public string Album { get; set; } = "";
 
-    public string Duration { get; set; } = "";
+    public TimeSpan Duration { get; set; }
 
     public string AlbumArtUrl { get; set; } = "";
 }
