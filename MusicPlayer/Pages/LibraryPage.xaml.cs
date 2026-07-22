@@ -11,6 +11,7 @@ public partial class LibraryPage : ContentPage
     private readonly LibraryViewModel viewModel = new();
     private readonly LibraryService libraryService = new();
     private readonly Id3Service id3Service = new();
+    private readonly AudioService audioService = new();
 
     public LibraryPage()
     {
@@ -46,5 +47,14 @@ public partial class LibraryPage : ContentPage
         {
             viewModel.AddSong(song);
         }
+    }
+    private void Songs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is not Song song)
+            return;
+
+        audioService.Play(song.FilePath);
+
+        ((CollectionView)sender).SelectedItem = null;
     }
 }

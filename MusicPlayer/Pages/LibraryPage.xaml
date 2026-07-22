@@ -25,7 +25,9 @@
 
         <CollectionView
         Margin="0,20,0,0"
-        ItemsSource="{Binding Songs}">
+        ItemsSource="{Binding Songs}"
+        SelectionMode="Single"
+        SelectionChanged="Songs_SelectionChanged">
 
             <CollectionView.ItemTemplate>
 
