@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MusicPlayer.Services;
-
 public class Id3Service
 {
     public Song ReadSong(string filePath)
@@ -19,6 +18,31 @@ public class Id3Service
             Artist = "Unknown Artist",
             Album = "Unknown Album"
         };
+
+        try
+        {
+            var mp3 = new Mp3(filePath);
+
+            var tag = mp3.GetTag(Id3TagFamily.Version2X);
+
+            if (tag != null)
+            {
+                if (!string.IsNullOrWhiteSpace(tag.Title))
+                    song.Title = tag.Title;
+
+                if (!string.IsNullOrWhiteSpace(tag.Album))
+                    song.Album = tag.Album;
+
+                if (tag.Artists != null)
+                {
+                    song.Artist = tag.Artists.ToString();
+                }
+            }
+        }
+        catch
+        {
+
+        }
 
         return song;
     }
