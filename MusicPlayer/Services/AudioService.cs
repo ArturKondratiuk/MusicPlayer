@@ -18,20 +18,15 @@ public class AudioService
 
     public bool IsPlaying => player?.IsPlaying ?? false;
 
-    public void Play(string filePath)
+    public void Play(Song song)
     {
-        Stop();
+        CurrentSong = song;
 
-        var stream = File.OpenRead(filePath);
+        var stream = File.OpenRead(song.FilePath);
 
         player = AudioManager.Current.CreatePlayer(stream);
 
         player.Play();
-
-        CurrentSong = new Song
-        {
-            FilePath = filePath
-        };
 
         SongChanged?.Invoke();
     }

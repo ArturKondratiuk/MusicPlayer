@@ -1,16 +1,17 @@
-using MusicPlayer.Models;
+using MusicPlayer.Services;
 
 namespace MusicPlayer.Pages;
+
 public partial class NowPlayingPage : ContentPage
 {
-    private readonly Song song;
+    private readonly AudioService audioService;
 
-    public NowPlayingPage(Song song)
+    public NowPlayingPage(AudioService audioService)
     {
         InitializeComponent();
 
-        this.song = song;
+        BindingContext = audioService.CurrentSong;
 
-        BindingContext = song;
+        this.audioService = audioService;
     }
 }

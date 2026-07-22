@@ -11,11 +11,17 @@ public partial class LibraryPage : ContentPage
     private readonly LibraryViewModel viewModel = new();
     private readonly LibraryService libraryService = new();
     private readonly Id3Service id3Service = new();
-    private readonly AudioService audioService = new();
 
-    public LibraryPage()
+    private readonly AudioService audioService;
+    private readonly IServiceProvider serviceProvider;
+
+    public LibraryPage(AudioService audioService, IServiceProvider serviceProvider)
     {
         InitializeComponent();
+
+        this.audioService = audioService;
+        this.serviceProvider = serviceProvider;
+
         BindingContext = viewModel;
 
         Loaded += async (_, _) =>
@@ -23,6 +29,7 @@ public partial class LibraryPage : ContentPage
             await LoadLibraryAsync();
         };
     }
+
     private async void AddMusicButton_Clicked(object sender, EventArgs e)
     {
         var result = await FilePicker.Default.PickAsync(new PickOptions
@@ -53,9 +60,11 @@ public partial class LibraryPage : ContentPage
         if (e.CurrentSelection.FirstOrDefault() is not Song song)
             return;
 
-        audioService.Play(song.FilePath);
+        audioService.Play(song);
 
-        await Navigation.PushAsync(new NowPlayingPage(song));
+        var page = serviceProvider.GetRequiredService<NowPlayingPage>();
+
+        await Navigation.PushAsync(page);
 
         ((CollectionView)sender).SelectedItem = null;
     }
