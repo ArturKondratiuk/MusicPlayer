@@ -48,12 +48,14 @@ public partial class LibraryPage : ContentPage
             viewModel.AddSong(song);
         }
     }
-    private void Songs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void Songs_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is not Song song)
             return;
 
         audioService.Play(song.FilePath);
+
+        await Navigation.PushAsync(new NowPlayingPage(song));
 
         ((CollectionView)sender).SelectedItem = null;
     }

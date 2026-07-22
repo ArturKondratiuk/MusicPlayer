@@ -11,14 +11,26 @@
         Spacing="20">
 
         <Image
-            HeightRequest="250"
             WidthRequest="250"
-            HorizontalOptions="Center"/>
+            HeightRequest="250"
+            BackgroundColor="LightGray"
+            Aspect="AspectFill" />
 
         <Label
-            FontSize="24"
-            HorizontalOptions="Center"
-            Text="No song playing"/>
+            FontSize="28"
+            FontAttributes="Bold"
+            HorizontalTextAlignment="Center"
+            Text="{Binding Title}" />
+
+        <Label
+            FontSize="18"
+            HorizontalTextAlignment="Center"
+            Text="{Binding Artist}" />
+
+        <Label
+            FontSize="16"
+            HorizontalTextAlignment="Center"
+            Text="{Binding Album}" />
 
     </VerticalStackLayout>
 
