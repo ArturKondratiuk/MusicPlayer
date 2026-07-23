@@ -55,9 +55,12 @@ public partial class LibraryPage : ContentPage
             viewModel.AddSong(song);
         }
     }
-    private async void Songs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void PlaySong_Clicked(object sender, EventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is not Song song)
+        if (sender is not Button button)
+            return;
+
+        if (button.CommandParameter is not Song song)
             return;
 
         audioService.Play(song);
@@ -65,7 +68,27 @@ public partial class LibraryPage : ContentPage
         var page = serviceProvider.GetRequiredService<NowPlayingPage>();
 
         await Navigation.PushAsync(page);
+    }
 
-        ((CollectionView)sender).SelectedItem = null;
+    private async void DeleteSong_Clicked(object sender, EventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+
+        if (button.CommandParameter is not Song song)
+            return;
+
+        bool answer = await DisplayAlert(
+            "Delete Song",
+            $"Delete \"{song.Title}\"?",
+            "Delete",
+            "Cancel");
+
+        if (!answer)
+            return;
+
+        viewModel.RemoveSong(song);
+
+        await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
     }
 }

@@ -11,4 +11,8 @@ public class LibraryViewModel : BaseViewModel
     {
         Songs.Add(song);
     }
+    public void RemoveSong(Song song)
+    {
+        Songs.Remove(song);
+    }
 }

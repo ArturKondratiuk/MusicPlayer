@@ -20,6 +20,8 @@ public class AudioService
 
     public void Play(Song song)
     {
+        Stop();
+
         CurrentSong = song;
 
         var stream = File.OpenRead(song.FilePath);

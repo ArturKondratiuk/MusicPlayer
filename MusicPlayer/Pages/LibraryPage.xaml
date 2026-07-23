@@ -26,32 +26,47 @@
         <CollectionView
         Margin="0,20,0,0"
         ItemsSource="{Binding Songs}"
-        SelectionMode="Single"
-        SelectionChanged="Songs_SelectionChanged">
+        SelectionMode="None">
 
             <CollectionView.ItemTemplate>
 
                 <DataTemplate>
 
-                    <Grid Padding="10">
+                    <Grid Padding="10"
+                     ColumnDefinitions="*,Auto">
 
-                        <VerticalStackLayout>
-
-                            <Label
-                        FontAttributes="Bold"
-                        FontSize="18"
-                        Text="{Binding Title}" />
+                        <VerticalStackLayout Grid.Column="0">
 
                             <Label
-                        FontSize="14"
-                        Text="{Binding Artist}" />
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="{Binding Title}" />
 
                             <Label
-                        FontSize="12"
-                        Text="{Binding Album}" />
+                            FontSize="14"
+                            Text="{Binding Artist}" />
+
+                            <Label
+                            FontSize="12"
+                            Text="{Binding Album}" />
 
                         </VerticalStackLayout>
 
+                        <VerticalStackLayout
+                        Grid.Column="1"
+                        Spacing="5">
+
+                            <Button
+                            Text="Play"
+                            Clicked="PlaySong_Clicked"
+                            CommandParameter="{Binding}" />
+
+                            <Button
+                            Text="Delete"
+                            Clicked="DeleteSong_Clicked"
+                            CommandParameter="{Binding}" />
+
+                        </VerticalStackLayout>
                     </Grid>
 
                 </DataTemplate>
