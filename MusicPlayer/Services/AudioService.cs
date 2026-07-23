@@ -18,6 +18,10 @@ public class AudioService
 
     public bool IsPlaying => player?.IsPlaying ?? false;
 
+    public double Position => player?.CurrentPosition ?? 0;
+
+    public double Duration => player?.Duration ?? 1;
+
     public void Play(Song song)
     {
         Stop();
@@ -51,5 +55,16 @@ public class AudioService
         player.Stop();
         player.Dispose();
         player = null;
+    }
+
+    public void TogglePlayPause()
+    {
+        if (player == null)
+            return;
+
+        if (player.IsPlaying)
+            player.Pause();
+        else
+            player.Play();
     }
 }

@@ -32,6 +32,28 @@
             HorizontalTextAlignment="Center"
             Text="{Binding Album}" />
 
+        <HorizontalStackLayout
+        HorizontalOptions="Center"
+        Spacing="10">
+
+            <Button
+            Text="⏮"
+            Clicked="Previous_Clicked"/>
+
+            <Button
+            Text="⏯"
+            Clicked="PlayPause_Clicked"/>
+
+            <Button
+            Text="⏹"
+            Clicked="Stop_Clicked"/>
+
+            <Button
+            Text="⏭"
+            Clicked="Next_Clicked"/>
+
+        </HorizontalStackLayout>
+
     </VerticalStackLayout>
 
 </ContentPage>
