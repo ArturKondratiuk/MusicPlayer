@@ -13,6 +13,7 @@ public partial class NowPlayingPage : ContentPage
         this.audioService = audioService;
 
         BindingContext = audioService.CurrentSong;
+
     }
 
     protected override void OnAppearing()
@@ -21,6 +22,8 @@ public partial class NowPlayingPage : ContentPage
 
         BindingContext = audioService.CurrentSong;
     }
+
+
     private async void Stop_Clicked(object sender, EventArgs e)
     {
         audioService.Stop();
@@ -35,11 +38,15 @@ public partial class NowPlayingPage : ContentPage
 
     private async void Previous_Clicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Info", "Previous track will be added next.", "OK");
+        audioService.Previous();
+
+        BindingContext = audioService.CurrentSong;
     }
 
     private async void Next_Clicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Info", "Next track will be added next.", "OK");
+        audioService.Next();
+
+        BindingContext = audioService.CurrentSong;
     }
 }

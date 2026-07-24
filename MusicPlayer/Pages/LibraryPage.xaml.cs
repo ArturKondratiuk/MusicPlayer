@@ -43,18 +43,26 @@ public partial class LibraryPage : ContentPage
         Song song = id3Service.ReadSong(result.FullPath);
 
         viewModel.AddSong(song);
+
+        audioService.SetPlaylist(viewModel.Songs.ToList());
+
         await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
     }
+
     private async Task LoadLibraryAsync()
     {
         viewModel.Songs.Clear();
+
         var songs = await libraryService.LoadLibraryAsync();
 
         foreach (var song in songs)
         {
             viewModel.AddSong(song);
         }
+
+        audioService.SetPlaylist(viewModel.Songs.ToList());
     }
+
     private async void PlaySong_Clicked(object sender, EventArgs e)
     {
         if (sender is not Button button)
@@ -87,7 +95,14 @@ public partial class LibraryPage : ContentPage
         if (!answer)
             return;
 
+        if (audioService.CurrentSong == song)
+        {
+            audioService.Stop();
+        }
+
         viewModel.RemoveSong(song);
+
+        audioService.SetPlaylist(viewModel.Songs.ToList());
 
         await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
     }
