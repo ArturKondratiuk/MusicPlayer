@@ -32,27 +32,58 @@
             HorizontalTextAlignment="Center"
             Text="{Binding Album}" />
 
-        <HorizontalStackLayout
-        HorizontalOptions="Center"
-        Spacing="10">
+        <Grid RowDefinitions="Auto,Auto,Auto"
+      Margin="0,20,0,0">
 
-            <Button
-            Text="⏮"
-            Clicked="Previous_Clicked"/>
+            <!-- Полоса -->
 
-            <Button
-            Text="⏯"
-            Clicked="PlayPause_Clicked"/>
+            <Slider
+        x:Name="ProgressSlider"
+        Grid.Row="0"
+        Minimum="0"
+        DragStarted="ProgressSlider_DragStarted"
+        DragCompleted="ProgressSlider_DragCompleted"/>
 
-            <Button
-            Text="⏹"
-            Clicked="Stop_Clicked"/>
+            <Grid
+            Grid.Row="1"
+            ColumnDefinitions="*,*">
 
-            <Button
-            Text="⏭"
-            Clicked="Next_Clicked"/>
+                <Label
+                x:Name="CurrentTimeLabel"
+                HorizontalOptions="Start"/>
 
-        </HorizontalStackLayout>
+                <Label
+                x:Name="DurationLabel"
+                HorizontalOptions="End"
+                Grid.Column="1"/>
+
+            </Grid>
+
+            <HorizontalStackLayout
+            Grid.Row="2"
+            HorizontalOptions="Center"
+            Margin="0,20,0,0"
+            Spacing="20">
+
+                <Button
+                Text="⏮"
+                Clicked="Previous_Clicked"/>
+
+                <Button
+                Text="⏯"
+                Clicked="PlayPause_Clicked"/>
+
+                <Button
+                Text="⏹"
+                Clicked="Stop_Clicked"/>
+
+                <Button
+                Text="⏭"
+                Clicked="Next_Clicked"/>
+
+            </HorizontalStackLayout>
+
+        </Grid>
 
     </VerticalStackLayout>
 

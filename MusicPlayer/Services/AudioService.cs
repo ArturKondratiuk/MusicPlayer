@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Plugin.Maui.Audio;
+﻿using Plugin.Maui.Audio;
 using MusicPlayer.Models;
 
 namespace MusicPlayer.Services;
@@ -11,18 +6,17 @@ namespace MusicPlayer.Services;
 public class AudioService
 {
     private IAudioPlayer? player;
-
-    var test = player.
+    private readonly IDispatcherTimer timer;
+    private FileStream? currentStream;
 
     public event Action? PlaybackUpdated;
+    public event Action? SongChanged;
 
     public Song? CurrentSong { get; private set; }
 
     public List<Song> Playlist { get; private set; } = new();
 
     public int CurrentIndex { get; private set; } = -1;
-
-    public event Action? SongChanged;
 
     public bool IsPlaying => player?.IsPlaying ?? false;
 
@@ -36,37 +30,17 @@ public class AudioService
     public string DurationText =>
         TimeSpan.FromSeconds(Duration).ToString(@"mm\:ss");
 
-    public void Play(Song song)
+    public AudioService()
     {
-        Stop();
+        timer = Application.Current!.Dispatcher.CreateTimer();
+        timer.Interval = TimeSpan.FromMilliseconds(200);
 
-        CurrentSong = song;
-
-        CurrentIndex = Playlist.IndexOf(song);
-
-        var stream = File.OpenRead(song.FilePath);
-
-        player = AudioManager.Current.CreatePlayer(stream);
-
-        player.Play();
-
-        Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
+        timer.Tick += (_, _) =>
         {
-            if (player == null)
-                return false;
-
             PlaybackUpdated?.Invoke();
+        };
 
-            return player.IsPlaying;
-        });
-
-        SongChanged?.Invoke();
-
-    }
-
-    public void Update()
-    {
-        PlaybackUpdated?.Invoke();
+        timer.Start();
     }
 
     public void SetPlaylist(List<Song> songs)
@@ -74,24 +48,33 @@ public class AudioService
         Playlist = songs;
     }
 
+    public void Play(Song song)
+    {
+        Stop();
+
+        CurrentSong = song;
+        CurrentIndex = Playlist.IndexOf(song);
+
+        currentStream = File.OpenRead(song.FilePath);
+
+        player = AudioManager.Current.CreatePlayer(currentStream);
+
+        player.Play();
+
+        SongChanged?.Invoke();
+        PlaybackUpdated?.Invoke();
+    }
+
     public void Pause()
     {
         player?.Pause();
+        PlaybackUpdated?.Invoke();
     }
 
     public void Resume()
     {
         player?.Play();
-    }
-
-    public void Stop()
-    {
-        if (player == null)
-            return;
-
-        player.Stop();
-        player.Dispose();
-        player = null;
+        PlaybackUpdated?.Invoke();
     }
 
     public void TogglePlayPause()
@@ -103,6 +86,39 @@ public class AudioService
             player.Pause();
         else
             player.Play();
+
+        PlaybackUpdated?.Invoke();
+    }
+
+    public void Stop()
+    {
+        if (player != null)
+        {
+            player.Stop();
+            player.Dispose();
+            player = null;
+        }
+
+        if (currentStream != null)
+        {
+            currentStream.Dispose();
+            currentStream = null;
+        }
+
+        PlaybackUpdated?.Invoke();
+    }
+
+    public void Seek(double position)
+    {
+        if (player == null)
+            return;
+
+        if (!player.CanSeek)
+            return;
+
+        player.Seek(position);
+
+        PlaybackUpdated?.Invoke();
     }
 
     public void Next()
@@ -110,10 +126,10 @@ public class AudioService
         if (Playlist.Count == 0)
             return;
 
-        if (CurrentIndex < Playlist.Count - 1)
-        {
-            Play(Playlist[CurrentIndex + 1]);
-        }
+        if (CurrentIndex >= Playlist.Count - 1)
+            return;
+
+        Play(Playlist[CurrentIndex + 1]);
     }
 
     public void Previous()
@@ -121,9 +137,9 @@ public class AudioService
         if (Playlist.Count == 0)
             return;
 
-        if (CurrentIndex > 0)
-        {
-            Play(Playlist[CurrentIndex - 1]);
-        }
+        if (CurrentIndex <= 0)
+            return;
+
+        Play(Playlist[CurrentIndex - 1]);
     }
 }
