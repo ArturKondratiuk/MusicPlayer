@@ -19,6 +19,8 @@ namespace MusicPlayer
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
             builder.Services.AddSingleton(AudioManager.Current);
+            builder.Services.AddSingleton<PlaylistService>();
+            builder.Services.AddSingleton<PlaylistViewModel>();
             builder.Services.AddSingleton<JsonService>();
             builder.Services.AddSingleton<LibraryService>();
             builder.Services.AddSingleton<SettingsService>();

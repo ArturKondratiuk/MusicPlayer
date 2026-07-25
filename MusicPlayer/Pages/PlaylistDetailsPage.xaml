@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="MusicPlayer.Pages.PlaylistDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Playlist">
+
+    <VerticalStackLayout Padding="20">
+
+        <Label
+            x:Name="PlaylistNameLabel"
+            FontSize="30"
+            FontAttributes="Bold"/>
+
+        <Button
+            Margin="0,15,0,15"
+            Text="Add Songs"
+            Clicked="AddSongs_Clicked"/>
+
+        <CollectionView
+            x:Name="SongsCollectionView">
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <Grid
+                        Padding="10"
+                        ColumnDefinitions="*,Auto">
+
+                        <VerticalStackLayout>
+
+                            <Label
+                                Text="{Binding Title}"
+                                FontAttributes="Bold"/>
+
+                            <Label
+                                Text="{Binding Artist}"/>
+
+                            <Label
+                                FontSize="12"
+                                Text="{Binding Album}"/>
+
+                        </VerticalStackLayout>
+
+                        <Button
+                            Grid.Column="1"
+                            Text="Delete"
+                            CommandParameter="{Binding}"
+                            Clicked="DeleteSong_Clicked"/>
+
+                    </Grid>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>
