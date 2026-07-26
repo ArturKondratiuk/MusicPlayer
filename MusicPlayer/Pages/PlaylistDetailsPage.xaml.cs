@@ -19,10 +19,11 @@ public partial class PlaylistDetailsPage : ContentPage
 
     private async void AddSongs_Clicked(object sender, EventArgs e)
     {
-        await DisplayAlert(
-            "Coming Soon",
-            "Song picker will be added next.",
-            "OK");
+        await Navigation.PushAsync(
+            new AddSongsPage(playlist));
+
+        SongsCollectionView.ItemsSource = null;
+        SongsCollectionView.ItemsSource = playlist.Songs;
     }
 
     private void DeleteSong_Clicked(object sender, EventArgs e)

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="MusicPlayer.Pages.AddSongsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Add Songs">
+
+    <VerticalStackLayout Padding="20">
+
+        <Label
+            Text="Select songs"
+            FontSize="28"
+            FontAttributes="Bold"/>
+
+        <CollectionView
+            x:Name="LibraryView"
+            SelectionMode="Multiple">
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <Grid Padding="10">
+
+                        <VerticalStackLayout>
+
+                            <Label
+                                Text="{Binding Title}"
+                                FontAttributes="Bold"/>
+
+                            <Label
+                                Text="{Binding Artist}"/>
+
+                            <Label
+                                FontSize="12"
+                                Text="{Binding Album}"/>
+
+                        </VerticalStackLayout>
+
+                    </Grid>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        <Button
+            Margin="0,20,0,0"
+            Text="Add Selected Songs"
+            Clicked="Save_Clicked"/>
+
+    </VerticalStackLayout>
+
+</ContentPage>
