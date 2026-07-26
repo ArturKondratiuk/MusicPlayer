@@ -6,12 +6,44 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Settings">
 
-    <VerticalStackLayout Padding="20">
+    <VerticalStackLayout
+        Padding="20"
+        Spacing="20">
 
         <Label
             FontSize="28"
             FontAttributes="Bold"
             Text="Settings"/>
+
+        <HorizontalStackLayout>
+
+            <Label
+                VerticalOptions="Center"
+                Text="Dark Mode"/>
+
+            <Switch
+                x:Name="DarkModeSwitch"
+                HorizontalOptions="EndAndExpand"
+                Toggled="DarkModeSwitch_Toggled"/>
+
+        </HorizontalStackLayout>
+
+        <Label Text="Default Library Sort"/>
+
+        <Picker
+            x:Name="SortPicker">
+
+            <Picker.Items>
+                <x:String>Title</x:String>
+                <x:String>Artist</x:String>
+                <x:String>Album</x:String>
+            </Picker.Items>
+
+        </Picker>
+
+        <Button
+            Text="Save"
+            Clicked="Save_Clicked"/>
 
     </VerticalStackLayout>
 
