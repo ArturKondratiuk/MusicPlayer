@@ -19,7 +19,9 @@
             Clicked="AddSongs_Clicked"/>
 
         <CollectionView
-            x:Name="SongsCollectionView">
+            x:Name="SongsCollectionView"
+            SelectionMode="Single"
+            SelectionChanged="SongsCollectionView_SelectionChanged">
 
             <CollectionView.ItemTemplate>
 

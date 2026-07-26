@@ -27,9 +27,10 @@ namespace MusicPlayer
             builder.Services.AddSingleton<AudioService>();
             builder.Services.AddSingleton<LibraryViewModel>();
 
+            builder.Services.AddTransient<PlaylistsPage>();
+            builder.Services.AddTransient<PlaylistDetailsPage>();
             builder.Services.AddTransient<LibraryPage>();
             builder.Services.AddTransient<NowPlayingPage>();
-            builder.Services.AddTransient<PlaylistsPage>();
             builder.Services.AddTransient<SettingsPage>();
 #if DEBUG
             builder.Logging.AddDebug();

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using MusicPlayer.Models;
 using MusicPlayer.Services;
 using MusicPlayer.ViewModels;
@@ -9,11 +10,19 @@ public partial class PlaylistsPage : ContentPage
     private readonly PlaylistViewModel viewModel = new();
     private readonly PlaylistService playlistService;
 
-    public PlaylistsPage()
+    private readonly AudioService audioService;
+    private readonly IServiceProvider serviceProvider;
+
+    public PlaylistsPage(
+        AudioService audioService,
+        IServiceProvider serviceProvider)
     {
         InitializeComponent();
 
         playlistService = new PlaylistService();
+
+        this.audioService = audioService;
+        this.serviceProvider = serviceProvider;
 
         BindingContext = viewModel;
 
@@ -82,7 +91,10 @@ public partial class PlaylistsPage : ContentPage
         if (button.CommandParameter is not Playlist playlist)
             return;
 
-        await Navigation.PushAsync(
-        new PlaylistDetailsPage(playlist));
+        var page = ActivatorUtilities.CreateInstance<PlaylistDetailsPage>(
+            serviceProvider,
+            playlist);
+
+        await Navigation.PushAsync(page);
     }
-}   
+}
