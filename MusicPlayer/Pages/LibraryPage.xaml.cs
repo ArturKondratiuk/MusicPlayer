@@ -1,4 +1,3 @@
-using Id3;
 using Microsoft.Maui.Storage;
 using MusicPlayer.Models;
 using MusicPlayer.Services;
@@ -15,6 +14,8 @@ public partial class LibraryPage : ContentPage
     private readonly AudioService audioService;
     private readonly IServiceProvider serviceProvider;
 
+    private bool loaded;
+
     public LibraryPage(AudioService audioService, IServiceProvider serviceProvider)
     {
         InitializeComponent();
@@ -23,30 +24,18 @@ public partial class LibraryPage : ContentPage
         this.serviceProvider = serviceProvider;
 
         BindingContext = viewModel;
-
-        Loaded += async (_, _) =>
-        {
-            await LoadLibraryAsync();
-        };
     }
 
-    private async void AddMusicButton_Clicked(object sender, EventArgs e)
+    protected override async void OnAppearing()
     {
-        var result = await FilePicker.Default.PickAsync(new PickOptions
-        {
-            PickerTitle = "Select a music file"
-        });
+        base.OnAppearing();
 
-        if (result == null)
+        if (loaded)
             return;
 
-        Song song = id3Service.ReadSong(result.FullPath);
+        loaded = true;
 
-        viewModel.AddSong(song);
-
-        audioService.SetPlaylist(viewModel.Songs.ToList());
-
-        await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
+        await LoadLibraryAsync();
     }
 
     private async Task LoadLibraryAsync()
@@ -56,11 +45,28 @@ public partial class LibraryPage : ContentPage
         var songs = await libraryService.LoadLibraryAsync();
 
         foreach (var song in songs)
-        {
             viewModel.AddSong(song);
-        }
 
         audioService.SetPlaylist(viewModel.Songs.ToList());
+    }
+
+    private async void AddMusicButton_Clicked(object sender, EventArgs e)
+    {
+        var result = await FilePicker.Default.PickAsync(new PickOptions
+        {
+            PickerTitle = "Select music"
+        });
+
+        if (result == null)
+            return;
+
+        var song = id3Service.ReadSong(result.FullPath);
+
+        viewModel.AddSong(song);
+
+        audioService.SetPlaylist(viewModel.Songs.ToList());
+
+        await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
     }
 
     private async void PlaySong_Clicked(object sender, EventArgs e)
@@ -71,11 +77,10 @@ public partial class LibraryPage : ContentPage
         if (button.CommandParameter is not Song song)
             return;
 
-        audioService.Play(song);
+        await audioService.Play(song);
 
-        var page = serviceProvider.GetRequiredService<NowPlayingPage>();
-
-        await Navigation.PushAsync(page);
+        await Navigation.PushAsync(
+            serviceProvider.GetRequiredService<NowPlayingPage>());
     }
 
     private async void DeleteSong_Clicked(object sender, EventArgs e)
@@ -96,9 +101,7 @@ public partial class LibraryPage : ContentPage
             return;
 
         if (audioService.CurrentSong == song)
-        {
             audioService.Stop();
-        }
 
         viewModel.RemoveSong(song);
 

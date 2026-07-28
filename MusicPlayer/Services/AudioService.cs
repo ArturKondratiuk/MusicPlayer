@@ -6,8 +6,9 @@ namespace MusicPlayer.Services;
 public class AudioService
 {
     private IAudioPlayer? player;
-    private readonly IDispatcherTimer timer;
     private FileStream? currentStream;
+    private readonly IDispatcherTimer timer;
+    private readonly AlbumArtService albumArtService = new();
 
     public event Action? PlaybackUpdated;
     public event Action? SongChanged;
@@ -22,13 +23,7 @@ public class AudioService
 
     public double Position => player?.CurrentPosition ?? 0;
 
-    public double Duration => player?.Duration ?? 1;
-
-    public string PositionText =>
-        TimeSpan.FromSeconds(Position).ToString(@"mm\:ss");
-
-    public string DurationText =>
-        TimeSpan.FromSeconds(Duration).ToString(@"mm\:ss");
+    public double Duration => player?.Duration ?? 0;
 
     public AudioService()
     {
@@ -37,7 +32,8 @@ public class AudioService
 
         timer.Tick += (_, _) =>
         {
-            PlaybackUpdated?.Invoke();
+            if (player != null)
+                PlaybackUpdated?.Invoke();
         };
 
         timer.Start();
@@ -48,7 +44,7 @@ public class AudioService
         Playlist = songs;
     }
 
-    public void Play(Song song)
+    public async Task Play(Song song)
     {
         Stop();
 
@@ -60,6 +56,11 @@ public class AudioService
         player = AudioManager.Current.CreatePlayer(currentStream);
 
         player.Play();
+
+        CurrentSong.AlbumArt =
+            await albumArtService.GetCoverUrlAsync(
+                CurrentSong.Artist,
+                CurrentSong.Album);
 
         SongChanged?.Invoke();
         PlaybackUpdated?.Invoke();
@@ -92,54 +93,32 @@ public class AudioService
 
     public void Stop()
     {
-        if (player != null)
-        {
-            player.Stop();
-            player.Dispose();
-            player = null;
-        }
+        player?.Stop();
+        player?.Dispose();
+        player = null;
 
-        if (currentStream != null)
-        {
-            currentStream.Dispose();
-            currentStream = null;
-        }
-
-        PlaybackUpdated?.Invoke();
+        currentStream?.Dispose();
+        currentStream = null;
     }
 
     public void Seek(double position)
     {
-        if (player == null)
-            return;
-
-        if (!player.CanSeek)
-            return;
-
-        player.Seek(position);
-
-        PlaybackUpdated?.Invoke();
+        if (player?.CanSeek == true)
+        {
+            player.Seek(position);
+            PlaybackUpdated?.Invoke();
+        }
     }
 
-    public void Next()
+    public async Task Next()
     {
-        if (Playlist.Count == 0)
-            return;
-
-        if (CurrentIndex >= Playlist.Count - 1)
-            return;
-
-        Play(Playlist[CurrentIndex + 1]);
+        if (CurrentIndex < Playlist.Count - 1)
+            await Play(Playlist[CurrentIndex + 1]);
     }
 
-    public void Previous()
+    public async Task Previous()
     {
-        if (Playlist.Count == 0)
-            return;
-
-        if (CurrentIndex <= 0)
-            return;
-
-        Play(Playlist[CurrentIndex - 1]);
+        if (CurrentIndex > 0)
+            await Play(Playlist[CurrentIndex - 1]);
     }
 }

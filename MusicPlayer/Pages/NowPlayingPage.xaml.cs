@@ -6,18 +6,59 @@ public partial class NowPlayingPage : ContentPage
 {
     private readonly AudioService audioService;
 
-    private bool isDragging = false;
+    private bool isDragging;
 
     public NowPlayingPage(AudioService audioService)
     {
         InitializeComponent();
 
         this.audioService = audioService;
+    }
 
-        BindingContext = audioService.CurrentSong;
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        audioService.PlaybackUpdated -= UpdatePlayer;
+        audioService.SongChanged -= UpdateSong;
 
         audioService.PlaybackUpdated += UpdatePlayer;
+        audioService.SongChanged += UpdateSong;
 
+        UpdateSong();
+        UpdatePlayer();
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        audioService.PlaybackUpdated -= UpdatePlayer;
+        audioService.SongChanged -= UpdateSong;
+    }
+
+    private void UpdateSong()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            var song = audioService.CurrentSong;
+
+            if (song == null)
+                return;
+
+            BindingContext = song;
+
+            if (string.IsNullOrWhiteSpace(song.AlbumArt))
+            {
+                AlbumImage.Source = null;
+            }
+            else
+            {
+                AlbumImage.Source = ImageSource.FromUri(new Uri(song.AlbumArt));
+            }
+
+            Title = song.Title;
+        });
     }
 
     private void UpdatePlayer()
@@ -27,8 +68,6 @@ public partial class NowPlayingPage : ContentPage
             if (audioService.CurrentSong == null)
                 return;
 
-            BindingContext = audioService.CurrentSong;
-
             if (!isDragging)
             {
                 ProgressSlider.Maximum = audioService.Duration;
@@ -36,10 +75,12 @@ public partial class NowPlayingPage : ContentPage
             }
 
             CurrentTimeLabel.Text =
-                TimeSpan.FromSeconds(audioService.Position).ToString(@"mm\:ss");
+                TimeSpan.FromSeconds(audioService.Position)
+                .ToString(@"mm\:ss");
 
             DurationLabel.Text =
-                TimeSpan.FromSeconds(audioService.Duration).ToString(@"mm\:ss");
+                TimeSpan.FromSeconds(audioService.Duration)
+                .ToString(@"mm\:ss");
         });
     }
 
@@ -49,24 +90,15 @@ public partial class NowPlayingPage : ContentPage
     }
 
     private void ProgressSlider_DragCompleted(object sender, EventArgs e)
-{
-    isDragging = false;
-
-    audioService.Seek(ProgressSlider.Value);
-}
-
-    protected override void OnAppearing()
     {
-        base.OnAppearing();
+        isDragging = false;
 
-        BindingContext = audioService.CurrentSong;
+        audioService.Seek(ProgressSlider.Value);
     }
 
-    protected override void OnDisappearing()
+    private void PlayPause_Clicked(object sender, EventArgs e)
     {
-        base.OnDisappearing();
-
-        audioService.PlaybackUpdated -= UpdatePlayer;
+        audioService.TogglePlayPause();
     }
 
     private async void Stop_Clicked(object sender, EventArgs e)
@@ -76,22 +108,13 @@ public partial class NowPlayingPage : ContentPage
         await Navigation.PopAsync();
     }
 
-    private void PlayPause_Clicked(object sender, EventArgs e)
-    {
-        audioService.TogglePlayPause();
-    }
-
     private async void Previous_Clicked(object sender, EventArgs e)
     {
-        audioService.Previous();
-
-        BindingContext = audioService.CurrentSong;
+        await audioService.Previous();
     }
 
     private async void Next_Clicked(object sender, EventArgs e)
     {
-        audioService.Next();
-
-        BindingContext = audioService.CurrentSong;
+        await audioService.Next();
     }
 }

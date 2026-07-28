@@ -11,10 +11,11 @@
         Spacing="20">
 
         <Image
+            x:Name="AlbumImage"
             WidthRequest="250"
             HeightRequest="250"
-            BackgroundColor="LightGray"
-            Aspect="AspectFill" />
+            Aspect="AspectFit"
+            Source="{Binding AlbumArt}" />
 
         <Label
             FontSize="28"
