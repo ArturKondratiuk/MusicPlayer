@@ -1,4 +1,4 @@
-using MusicPlayer.Services;
+﻿using MusicPlayer.Services;
 
 namespace MusicPlayer.Pages;
 
@@ -27,6 +27,7 @@ public partial class NowPlayingPage : ContentPage
 
         UpdateSong();
         UpdatePlayer();
+        UpdateButtons();
     }
 
     protected override void OnDisappearing()
@@ -48,16 +49,17 @@ public partial class NowPlayingPage : ContentPage
 
             BindingContext = song;
 
-            if (string.IsNullOrWhiteSpace(song.AlbumArt))
+            if (!string.IsNullOrWhiteSpace(song.AlbumArt))
             {
-                AlbumImage.Source = null;
+                AlbumImage.Source =
+                    ImageSource.FromUri(new Uri(song.AlbumArt));
             }
             else
             {
-                AlbumImage.Source = ImageSource.FromUri(new Uri(song.AlbumArt));
+                AlbumImage.Source = null;
             }
 
-            Title = song.Title;
+            Title = $"Now Playing - {song.Title}";
         });
     }
 
@@ -81,7 +83,52 @@ public partial class NowPlayingPage : ContentPage
             DurationLabel.Text =
                 TimeSpan.FromSeconds(audioService.Duration)
                 .ToString(@"mm\:ss");
+
+            UpdateButtons();
+
+            RepeatButton.Text = audioService.RepeatMode switch
+            {
+                0 => "➡️", // Off
+                1 => "🔁", // Repeat All
+                2 => "🔂", // Repeat One
+                _ => "➡️"
+            };
         });
+    }
+
+    private void UpdateButtons()
+    {
+        if (audioService.Shuffle)
+        {
+            ShuffleButton.BackgroundColor = Colors.DodgerBlue;
+            ShuffleButton.TextColor = Colors.White;
+        }
+        else
+        {
+            ShuffleButton.BackgroundColor = Colors.LightGray;
+            ShuffleButton.TextColor = Colors.Black;
+        }
+
+        switch (audioService.RepeatMode)
+        {
+            case 0:
+                RepeatButton.Text = "🔁";
+                RepeatButton.BackgroundColor = Colors.LightGray;
+                RepeatButton.TextColor = Colors.Black;
+                break;
+
+            case 1:
+                RepeatButton.Text = "🔁";
+                RepeatButton.BackgroundColor = Colors.DodgerBlue;
+                RepeatButton.TextColor = Colors.White;
+                break;
+
+            case 2:
+                RepeatButton.Text = "🔂";
+                RepeatButton.BackgroundColor = Colors.DodgerBlue;
+                RepeatButton.TextColor = Colors.White;
+                break;
+        }
     }
 
     private void ProgressSlider_DragStarted(object sender, EventArgs e)
@@ -101,13 +148,6 @@ public partial class NowPlayingPage : ContentPage
         audioService.TogglePlayPause();
     }
 
-    private async void Stop_Clicked(object sender, EventArgs e)
-    {
-        audioService.Stop();
-
-        await Navigation.PopAsync();
-    }
-
     private async void Previous_Clicked(object sender, EventArgs e)
     {
         await audioService.Previous();
@@ -116,5 +156,29 @@ public partial class NowPlayingPage : ContentPage
     private async void Next_Clicked(object sender, EventArgs e)
     {
         await audioService.Next();
+    }
+
+    private async void Stop_Clicked(object sender, EventArgs e)
+    {
+        audioService.Stop();
+
+        await Navigation.PopAsync();
+    }
+
+    private void Shuffle_Clicked(object sender, EventArgs e)
+    {
+        audioService.Shuffle = !audioService.Shuffle;
+
+        UpdateButtons();
+    }
+
+    private void Repeat_Clicked(object sender, EventArgs e)
+    {
+        audioService.RepeatMode++;
+
+        if (audioService.RepeatMode > 2)
+            audioService.RepeatMode = 0;
+
+        UpdatePlayer();
     }
 }

@@ -6,86 +6,109 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Now Playing">
 
-    <VerticalStackLayout
-        Padding="20"
-        Spacing="20">
+    <ScrollView>
 
-        <Image
-            x:Name="AlbumImage"
-            WidthRequest="250"
-            HeightRequest="250"
-            Aspect="AspectFit"
-            Source="{Binding AlbumArt}" />
+        <VerticalStackLayout
+            Padding="25"
+            Spacing="20">
 
-        <Label
-            FontSize="28"
-            FontAttributes="Bold"
-            HorizontalTextAlignment="Center"
-            Text="{Binding Title}" />
+            <Image
+                x:Name="AlbumImage"
+                WidthRequest="280"
+                HeightRequest="280"
+                HorizontalOptions="Center"
+                Aspect="AspectFill"
+                Source="{Binding AlbumArt}" />
 
-        <Label
-            FontSize="18"
-            HorizontalTextAlignment="Center"
-            Text="{Binding Artist}" />
+            <Label
+                Text="{Binding Title}"
+                FontSize="30"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
 
-        <Label
-            FontSize="16"
-            HorizontalTextAlignment="Center"
-            Text="{Binding Album}" />
+            <Label
+                Text="{Binding Artist}"
+                FontSize="18"
+                HorizontalTextAlignment="Center"/>
 
-        <Grid RowDefinitions="Auto,Auto,Auto"
-      Margin="0,20,0,0">
-
-            <!-- Полоса -->
+            <Label
+                Text="{Binding Album}"
+                FontSize="15"
+                Opacity="0.7"
+                HorizontalTextAlignment="Center"/>
 
             <Slider
-        x:Name="ProgressSlider"
-        Grid.Row="0"
-        Minimum="0"
-        DragStarted="ProgressSlider_DragStarted"
-        DragCompleted="ProgressSlider_DragCompleted"/>
+                x:Name="ProgressSlider"
+                Minimum="0"
+                DragStarted="ProgressSlider_DragStarted"
+                DragCompleted="ProgressSlider_DragCompleted"/>
 
-            <Grid
-            Grid.Row="1"
-            ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,*">
 
                 <Label
-                x:Name="CurrentTimeLabel"
-                HorizontalOptions="Start"/>
+                    x:Name="CurrentTimeLabel"
+                    HorizontalOptions="Start"/>
 
                 <Label
-                x:Name="DurationLabel"
-                HorizontalOptions="End"
-                Grid.Column="1"/>
+                    x:Name="DurationLabel"
+                    Grid.Column="1"
+                    HorizontalOptions="End"/>
 
             </Grid>
 
             <HorizontalStackLayout
-            Grid.Row="2"
-            HorizontalOptions="Center"
-            Margin="0,20,0,0"
-            Spacing="20">
+                HorizontalOptions="Center"
+                Spacing="25">
 
                 <Button
-                Text="⏮"
-                Clicked="Previous_Clicked"/>
+                    FontSize="24"
+                    WidthRequest="65"
+                    HeightRequest="65"
+                    Text="⏮"
+                    Clicked="Previous_Clicked"/>
 
                 <Button
-                Text="⏯"
-                Clicked="PlayPause_Clicked"/>
+                    FontSize="24"
+                    WidthRequest="65"
+                    HeightRequest="65"
+                    Text="⏯"
+                    Clicked="PlayPause_Clicked"/>
 
                 <Button
-                Text="⏹"
-                Clicked="Stop_Clicked"/>
-
-                <Button
-                Text="⏭"
-                Clicked="Next_Clicked"/>
+                    FontSize="24"
+                    WidthRequest="65"
+                    HeightRequest="65"
+                    Text="⏭"
+                    Clicked="Next_Clicked"/>
 
             </HorizontalStackLayout>
 
-        </Grid>
+            <HorizontalStackLayout
+                HorizontalOptions="Center"
+                Margin="0,15,0,0"
+                Spacing="15">
 
-    </VerticalStackLayout>
+                <Button
+                    x:Name="ShuffleButton"
+                    WidthRequest="90"
+                    Text="🔀"
+                    Clicked="Shuffle_Clicked"/>
+
+                <Button
+                    Text="⏹"
+                    WidthRequest="90"
+                    Clicked="Stop_Clicked"/>
+
+                <Button
+                    x:Name="RepeatButton"
+                    WidthRequest="90"
+                    Text="➡️"
+                    Clicked="Repeat_Clicked"/>
+
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
 
 </ContentPage>

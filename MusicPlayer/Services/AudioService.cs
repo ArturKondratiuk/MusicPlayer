@@ -1,5 +1,5 @@
-﻿using Plugin.Maui.Audio;
-using MusicPlayer.Models;
+﻿using MusicPlayer.Models;
+using Plugin.Maui.Audio;
 
 namespace MusicPlayer.Services;
 
@@ -7,8 +7,10 @@ public class AudioService
 {
     private IAudioPlayer? player;
     private FileStream? currentStream;
+
     private readonly IDispatcherTimer timer;
     private readonly AlbumArtService albumArtService = new();
+    private readonly LibraryService libraryService = new();
 
     public event Action? PlaybackUpdated;
     public event Action? SongChanged;
@@ -19,6 +21,10 @@ public class AudioService
 
     public int CurrentIndex { get; private set; } = -1;
 
+    public bool Shuffle { get; set; }
+
+    public int RepeatMode { get; set; }
+
     public bool IsPlaying => player?.IsPlaying ?? false;
 
     public double Position => player?.CurrentPosition ?? 0;
@@ -28,15 +34,26 @@ public class AudioService
     public AudioService()
     {
         timer = Application.Current!.Dispatcher.CreateTimer();
+
         timer.Interval = TimeSpan.FromMilliseconds(200);
 
-        timer.Tick += (_, _) =>
-        {
-            if (player != null)
-                PlaybackUpdated?.Invoke();
-        };
+        timer.Tick += Timer_Tick;
 
         timer.Start();
+    }
+
+    private async void Timer_Tick(object? sender, EventArgs e)
+    {
+        if (player == null)
+            return;
+
+        PlaybackUpdated?.Invoke();
+
+        if (player.IsPlaying)
+            return;
+
+        if (Duration > 0 && Position >= Duration - 0.5)
+            await SongFinished();
     }
 
     public void SetPlaylist(List<Song> songs)
@@ -46,7 +63,7 @@ public class AudioService
 
     public async Task Play(Song song)
     {
-        Stop();
+        StopInternal();
 
         CurrentSong = song;
         CurrentIndex = Playlist.IndexOf(song);
@@ -57,24 +74,16 @@ public class AudioService
 
         player.Play();
 
-        CurrentSong.AlbumArt =
-            await albumArtService.GetCoverUrlAsync(
-                CurrentSong.Artist,
-                CurrentSong.Album);
+        if (string.IsNullOrWhiteSpace(song.AlbumArt))
+        {
+            song.AlbumArt = await albumArtService.GetCoverUrlAsync(
+                song.Artist,
+                song.Album);
+
+            await libraryService.SaveLibraryAsync(Playlist);
+        }
 
         SongChanged?.Invoke();
-        PlaybackUpdated?.Invoke();
-    }
-
-    public void Pause()
-    {
-        player?.Pause();
-        PlaybackUpdated?.Invoke();
-    }
-
-    public void Resume()
-    {
-        player?.Play();
         PlaybackUpdated?.Invoke();
     }
 
@@ -91,7 +100,30 @@ public class AudioService
         PlaybackUpdated?.Invoke();
     }
 
+    public void Pause()
+    {
+        player?.Pause();
+        PlaybackUpdated?.Invoke();
+    }
+
+    public void Resume()
+    {
+        player?.Play();
+        PlaybackUpdated?.Invoke();
+    }
+
     public void Stop()
+    {
+        StopInternal();
+
+        CurrentSong = null;
+        CurrentIndex = -1;
+
+        SongChanged?.Invoke();
+        PlaybackUpdated?.Invoke();
+    }
+
+    private void StopInternal()
     {
         player?.Stop();
         player?.Dispose();
@@ -101,24 +133,71 @@ public class AudioService
         currentStream = null;
     }
 
-    public void Seek(double position)
+    public void Seek(double seconds)
     {
         if (player?.CanSeek == true)
         {
-            player.Seek(position);
+            player.Seek(seconds);
             PlaybackUpdated?.Invoke();
         }
     }
 
     public async Task Next()
     {
+        if (Playlist.Count == 0)
+            return;
+
+        if (Shuffle)
+        {
+            Random rnd = new();
+
+            int next = rnd.Next(Playlist.Count);
+
+            await Play(Playlist[next]);
+            return;
+        }
+
         if (CurrentIndex < Playlist.Count - 1)
+        {
             await Play(Playlist[CurrentIndex + 1]);
+            return;
+        }
+
+        if (RepeatMode == 1)
+        {
+            await Play(Playlist[0]);
+        }
     }
 
     public async Task Previous()
     {
+        if (Playlist.Count == 0)
+            return;
+
         if (CurrentIndex > 0)
+        {
             await Play(Playlist[CurrentIndex - 1]);
+            return;
+        }
+
+        if (RepeatMode == 1)
+        {
+            await Play(Playlist[^1]);
+        }
+    }
+
+    private async Task SongFinished()
+    {
+        switch (RepeatMode)
+        {
+            case 2:
+                if (CurrentSong != null)
+                    await Play(CurrentSong);
+                break;
+
+            default:
+                await Next();
+                break;
+        }
     }
 }
