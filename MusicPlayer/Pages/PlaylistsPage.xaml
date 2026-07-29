@@ -6,63 +6,76 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Playlists">
 
-    <VerticalStackLayout Padding="20">
+    <ScrollView>
 
-        <Label
-            Text="Playlists"
-            FontSize="30"
-            FontAttributes="Bold"/>
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="15">
 
-        <Button
-            Margin="0,15,0,0"
-            Text="Create Playlist"
-            Clicked="CreatePlaylist_Clicked"/>
+            <Label
+                FontSize="30"
+                FontAttributes="Bold"
+                Text="Playlists" />
 
-        <CollectionView
-            Margin="0,20,0,0"
-            ItemsSource="{Binding Playlists}">
+            <Button
+                Text="Create Playlist"
+                Clicked="CreatePlaylist_Clicked" />
 
-            <CollectionView.ItemTemplate>
+            <CollectionView
+                Margin="0,10,0,0"
+                ItemsSource="{Binding Playlists}"
+                SelectionMode="None">
 
-                <DataTemplate>
+                <CollectionView.ItemTemplate>
 
-                    <Frame Margin="0,0,0,10">
+                    <DataTemplate>
 
-                        <VerticalStackLayout>
+                        <Border
+                            Margin="0,0,0,12"
+                            Padding="15"
+                            StrokeThickness="1"
+                            Stroke="{AppThemeBinding Light=#DDDDDD, Dark=#555555}"
+                            Background="{AppThemeBinding Light=White, Dark=#2A2A2A}">
 
-                            <Label
-                                FontSize="20"
-                                FontAttributes="Bold"
-                                Text="{Binding Name}"/>
+                            <VerticalStackLayout Spacing="8">
 
-                            <Label
-                                Text="{Binding Songs.Count,StringFormat='Songs: {0}'}"/>
+                                <Label
+                                    FontSize="20"
+                                    FontAttributes="Bold"
+                                    Text="{Binding Name}" />
 
-                            <HorizontalStackLayout Margin="0,10,0,0">
+                                <Label
+                                    FontSize="14"
+                                    Text="{Binding Songs.Count, StringFormat='Songs: {0}'}" />
 
-                                <Button
-                                    Text="Open"
-                                    Clicked="OpenPlaylist_Clicked"
-                                    CommandParameter="{Binding}"/>
+                                <HorizontalStackLayout
+                                    Margin="0,10,0,0"
+                                    Spacing="10">
 
-                                <Button
-                                    Margin="10,0,0,0"
-                                    Text="Delete"
-                                    Clicked="DeletePlaylist_Clicked"
-                                    CommandParameter="{Binding}"/>
+                                    <Button
+                                        Text="Open"
+                                        Clicked="OpenPlaylist_Clicked"
+                                        CommandParameter="{Binding}" />
 
-                            </HorizontalStackLayout>
+                                    <Button
+                                        Text="Delete"
+                                        Clicked="DeletePlaylist_Clicked"
+                                        CommandParameter="{Binding}" />
 
-                        </VerticalStackLayout>
+                                </HorizontalStackLayout>
 
-                    </Frame>
+                            </VerticalStackLayout>
 
-                </DataTemplate>
+                        </Border>
 
-            </CollectionView.ItemTemplate>
+                    </DataTemplate>
 
-        </CollectionView>
+                </CollectionView.ItemTemplate>
 
-    </VerticalStackLayout>
+            </CollectionView>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
 
 </ContentPage>

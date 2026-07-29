@@ -10,13 +10,14 @@ public partial class LibraryPage : ContentPage
     private readonly LibraryViewModel viewModel = new();
     private readonly LibraryService libraryService = new();
     private readonly Id3Service id3Service = new();
+    private readonly SettingsService settingsService = new();
 
     private readonly AudioService audioService;
     private readonly IServiceProvider serviceProvider;
 
-    private bool loaded;
-
-    public LibraryPage(AudioService audioService, IServiceProvider serviceProvider)
+    public LibraryPage(
+        AudioService audioService,
+        IServiceProvider serviceProvider)
     {
         InitializeComponent();
 
@@ -30,11 +31,6 @@ public partial class LibraryPage : ContentPage
     {
         base.OnAppearing();
 
-        if (loaded)
-            return;
-
-        loaded = true;
-
         await LoadLibraryAsync();
     }
 
@@ -42,7 +38,26 @@ public partial class LibraryPage : ContentPage
     {
         viewModel.Songs.Clear();
 
+        var settings = await settingsService.LoadAsync();
+
         var songs = await libraryService.LoadLibraryAsync();
+
+        songs = settings.DefaultSort switch
+        {
+            "Artist" => songs
+                .OrderBy(s => s.Artist)
+                .ThenBy(s => s.Title)
+                .ToList(),
+
+            "Album" => songs
+                .OrderBy(s => s.Album)
+                .ThenBy(s => s.Title)
+                .ToList(),
+
+            _ => songs
+                .OrderBy(s => s.Title)
+                .ToList()
+        };
 
         foreach (var song in songs)
             viewModel.AddSong(song);
@@ -60,13 +75,15 @@ public partial class LibraryPage : ContentPage
         if (result == null)
             return;
 
-        var song = id3Service.ReadSong(result.FullPath);
+        Song song = id3Service.ReadSong(result.FullPath);
 
         viewModel.AddSong(song);
 
         audioService.SetPlaylist(viewModel.Songs.ToList());
 
         await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
+
+        await LoadLibraryAsync();
     }
 
     private async void PlaySong_Clicked(object sender, EventArgs e)
@@ -108,5 +125,7 @@ public partial class LibraryPage : ContentPage
         audioService.SetPlaylist(viewModel.Songs.ToList());
 
         await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
+
+        await LoadLibraryAsync();
     }
 }
