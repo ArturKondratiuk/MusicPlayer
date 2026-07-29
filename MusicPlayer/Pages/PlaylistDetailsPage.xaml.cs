@@ -83,11 +83,10 @@ public partial class PlaylistDetailsPage : ContentPage
 
         audioService.SetPlaylist(playlist.Songs.ToList());
 
-        audioService.Play(song);
+        await audioService.Play(song);
 
-        var page = serviceProvider.GetRequiredService<NowPlayingPage>();
-
-        await Navigation.PushAsync(page);
+        await Navigation.PushAsync(
+            serviceProvider.GetRequiredService<NowPlayingPage>());
 
         SongsCollectionView.SelectedItem = null;
     }
@@ -104,5 +103,25 @@ public partial class PlaylistDetailsPage : ContentPage
             playlists[index] = playlist;
 
         return playlists;
+    }
+
+    private async void PlayPlaylist_Clicked(object sender, EventArgs e)
+    {
+        if (playlist.Songs.Count == 0)
+        {
+            await DisplayAlert(
+                "Playlist",
+                "Playlist is empty.",
+                "OK");
+
+            return;
+        }
+
+        audioService.SetPlaylist(playlist.Songs.ToList());
+
+        await audioService.Play(playlist.Songs[0]);
+
+        await Navigation.PushAsync(
+            serviceProvider.GetRequiredService<NowPlayingPage>());
     }
 }

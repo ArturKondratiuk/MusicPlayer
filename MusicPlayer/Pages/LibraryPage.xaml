@@ -8,6 +8,11 @@
 
     <VerticalStackLayout Padding="20" Spacing="15">
 
+        <SearchBar
+            x:Name="SearchBar"
+            Placeholder="Search songs..."
+            TextChanged="SearchBar_TextChanged"/>
+
         <Label
             Text="Music Library"
             FontSize="28"

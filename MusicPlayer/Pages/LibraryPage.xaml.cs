@@ -11,6 +11,7 @@ public partial class LibraryPage : ContentPage
     private readonly LibraryService libraryService = new();
     private readonly Id3Service id3Service = new();
     private readonly SettingsService settingsService = new();
+    private List<Song> allSongs = new();
 
     private readonly AudioService audioService;
     private readonly IServiceProvider serviceProvider;
@@ -36,30 +37,56 @@ public partial class LibraryPage : ContentPage
 
     private async Task LoadLibraryAsync()
     {
-        viewModel.Songs.Clear();
-
         var settings = await settingsService.LoadAsync();
 
-        var songs = await libraryService.LoadLibraryAsync();
+        allSongs = await libraryService.LoadLibraryAsync();
 
-        songs = settings.DefaultSort switch
+        allSongs = settings.DefaultSort switch
         {
-            "Artist" => songs
+            "Artist" => allSongs
                 .OrderBy(s => s.Artist)
                 .ThenBy(s => s.Title)
                 .ToList(),
 
-            "Album" => songs
+            "Album" => allSongs
                 .OrderBy(s => s.Album)
                 .ThenBy(s => s.Title)
                 .ToList(),
 
-            _ => songs
+            _ => allSongs
                 .OrderBy(s => s.Title)
                 .ToList()
         };
 
-        foreach (var song in songs)
+        viewModel.Songs.Clear();
+
+        foreach (var song in allSongs)
+            viewModel.AddSong(song);
+
+        audioService.SetPlaylist(allSongs);
+    }
+
+    private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        string text = e.NewTextValue?.Trim().ToLower() ?? "";
+
+        viewModel.Songs.Clear();
+
+        IEnumerable<Song> filtered;
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            filtered = allSongs;
+        }
+        else
+        {
+            filtered = allSongs.Where(song =>
+                (song.Title?.ToLower().Contains(text) ?? false) ||
+                (song.Artist?.ToLower().Contains(text) ?? false) ||
+                (song.Album?.ToLower().Contains(text) ?? false));
+        }
+
+        foreach (var song in filtered)
             viewModel.AddSong(song);
 
         audioService.SetPlaylist(viewModel.Songs.ToList());
@@ -78,6 +105,8 @@ public partial class LibraryPage : ContentPage
         Song song = id3Service.ReadSong(result.FullPath);
 
         viewModel.AddSong(song);
+
+        allSongs.Add(song);
 
         audioService.SetPlaylist(viewModel.Songs.ToList());
 
@@ -121,6 +150,8 @@ public partial class LibraryPage : ContentPage
             audioService.Stop();
 
         viewModel.RemoveSong(song);
+
+        allSongs.Remove(song);
 
         audioService.SetPlaylist(viewModel.Songs.ToList());
 

@@ -14,6 +14,11 @@
             FontAttributes="Bold"/>
 
         <Button
+            Margin="0,15,0,0"
+            Text="▶ Play Playlist"
+            Clicked="PlayPlaylist_Clicked"/>
+
+        <Button
             Margin="0,15,0,15"
             Text="Add Songs"
             Clicked="AddSongs_Clicked"/>
