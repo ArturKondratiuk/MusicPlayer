@@ -72,6 +72,8 @@ public class AudioService
 
         player = AudioManager.Current.CreatePlayer(currentStream);
 
+        player.Volume = 1.0;
+
         player.Play();
 
         if (string.IsNullOrWhiteSpace(song.AlbumArt))
@@ -141,6 +143,21 @@ public class AudioService
             player.Seek(seconds);
             PlaybackUpdated?.Invoke();
         }
+    }
+
+    public void SetVolume(double volume)
+    {
+        if (player == null)
+            return;
+
+        player.Pause();
+        player.Volume = volume;
+        player.Play();
+    }
+
+    public double GetVolume()
+    {
+        return 1.0;
     }
 
     public async Task Next()

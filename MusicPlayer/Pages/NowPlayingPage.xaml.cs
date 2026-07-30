@@ -28,6 +28,8 @@ public partial class NowPlayingPage : ContentPage
         UpdateSong();
         UpdatePlayer();
         UpdateButtons();
+
+        VolumeSlider.Value = audioService.GetVolume();
     }
 
     protected override void OnDisappearing()
@@ -175,5 +177,9 @@ public partial class NowPlayingPage : ContentPage
             audioService.RepeatMode = 0;
 
         UpdateButtons();
+    }
+    private void VolumeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        audioService.SetVolume(e.NewValue);
     }
 }

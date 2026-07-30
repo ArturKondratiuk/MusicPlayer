@@ -50,26 +50,19 @@
                 DragStarted="ProgressSlider_DragStarted"
                 DragCompleted="ProgressSlider_DragCompleted"/>
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="Auto,*">
 
                 <Label
-                    x:Name="CurrentTimeLabel"
-                    VerticalOptions="Center"/>
-
-                <Label
-                    Grid.Column="1"
-                    Text="Playback"
-                    HorizontalOptions="Center"
-                    FontAttributes="Bold"
-                    Opacity="0.6"/>
+                    x:Name="CurrentTimeLabel"/>
 
                 <Label
                     x:Name="DurationLabel"
-                    Grid.Column="2"
-                    HorizontalOptions="End"
-                    VerticalOptions="Center"/>
+                    Grid.Column="1"
+                    HorizontalOptions="End"/>
 
             </Grid>
+
+            <!-- Playback buttons -->
 
             <HorizontalStackLayout
                 HorizontalOptions="Center"
@@ -102,9 +95,10 @@
 
             </HorizontalStackLayout>
 
+            <!-- Shuffle / Stop / Repeat -->
+
             <HorizontalStackLayout
                 HorizontalOptions="Center"
-                Margin="0,15,0,0"
                 Spacing="15">
 
                 <Button
@@ -125,6 +119,34 @@
                     Clicked="Repeat_Clicked"/>
 
             </HorizontalStackLayout>
+
+            <Grid
+                Margin="0,15,0,0"
+                WidthRequest="260"
+                HorizontalOptions="Center"
+                ColumnDefinitions="Auto,*,Auto"
+                ColumnSpacing="10">
+
+                <Label
+                    Text="🔉"
+                    FontSize="18"
+                    VerticalOptions="Center"/>
+
+                <Slider
+                    x:Name="VolumeSlider"
+                    Grid.Column="1"
+                    Minimum="0"
+                    Maximum="1"
+                    ValueChanged="VolumeSlider_ValueChanged"
+                    VerticalOptions="Center"/>
+
+                <Label
+                    Grid.Column="2"
+                    Text="🔊"
+                    FontSize="18"
+                    VerticalOptions="Center"/>
+
+            </Grid>
 
         </VerticalStackLayout>
 
