@@ -12,30 +12,37 @@
             Padding="25"
             Spacing="20">
 
-            <Image
-                x:Name="AlbumImage"
-                WidthRequest="280"
-                HeightRequest="280"
+            <Border
                 HorizontalOptions="Center"
-                Aspect="AspectFill"
-                Source="{Binding AlbumArt}" />
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 20">
+
+                <Image
+                    x:Name="AlbumImage"
+                    WidthRequest="280"
+                    HeightRequest="280"
+                    Aspect="AspectFill"/>
+
+            </Border>
 
             <Label
                 Text="{Binding Title}"
-                FontSize="30"
+                FontSize="32"
                 FontAttributes="Bold"
-                HorizontalTextAlignment="Center"/>
+                HorizontalTextAlignment="Center"
+                LineBreakMode="TailTruncation"/>
 
             <Label
                 Text="{Binding Artist}"
-                FontSize="18"
-                HorizontalTextAlignment="Center"/>
+                FontSize="20"
+                HorizontalTextAlignment="Center"
+                Opacity="0.9"/>
 
             <Label
                 Text="{Binding Album}"
                 FontSize="15"
-                Opacity="0.7"
-                HorizontalTextAlignment="Center"/>
+                HorizontalTextAlignment="Center"
+                Opacity="0.6"/>
 
             <Slider
                 x:Name="ProgressSlider"
@@ -43,16 +50,24 @@
                 DragStarted="ProgressSlider_DragStarted"
                 DragCompleted="ProgressSlider_DragCompleted"/>
 
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="Auto,*,Auto">
 
                 <Label
                     x:Name="CurrentTimeLabel"
-                    HorizontalOptions="Start"/>
+                    VerticalOptions="Center"/>
+
+                <Label
+                    Grid.Column="1"
+                    Text="Playback"
+                    HorizontalOptions="Center"
+                    FontAttributes="Bold"
+                    Opacity="0.6"/>
 
                 <Label
                     x:Name="DurationLabel"
-                    Grid.Column="1"
-                    HorizontalOptions="End"/>
+                    Grid.Column="2"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"/>
 
             </Grid>
 
@@ -61,23 +76,27 @@
                 Spacing="25">
 
                 <Button
-                    FontSize="24"
                     WidthRequest="65"
                     HeightRequest="65"
+                    CornerRadius="32"
+                    FontSize="24"
                     Text="⏮"
                     Clicked="Previous_Clicked"/>
 
                 <Button
-                    FontSize="24"
-                    WidthRequest="65"
-                    HeightRequest="65"
-                    Text="⏯"
+                    x:Name="PlayPauseButton"
+                    WidthRequest="75"
+                    HeightRequest="75"
+                    CornerRadius="38"
+                    FontSize="28"
+                    Text="▶"
                     Clicked="PlayPause_Clicked"/>
 
                 <Button
-                    FontSize="24"
                     WidthRequest="65"
                     HeightRequest="65"
+                    CornerRadius="32"
+                    FontSize="24"
                     Text="⏭"
                     Clicked="Next_Clicked"/>
 
@@ -95,14 +114,14 @@
                     Clicked="Shuffle_Clicked"/>
 
                 <Button
-                    Text="⏹"
                     WidthRequest="90"
+                    Text="⏹"
                     Clicked="Stop_Clicked"/>
 
                 <Button
                     x:Name="RepeatButton"
                     WidthRequest="90"
-                    Text="➡️"
+                    Text="🔁"
                     Clicked="Repeat_Clicked"/>
 
             </HorizontalStackLayout>

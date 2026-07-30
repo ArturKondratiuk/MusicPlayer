@@ -6,25 +6,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Library">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto,Auto,*"
+        RowSpacing="15">
+
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="*,Auto,Auto">
+
+            <Label
+                Text="Music Library"
+                FontSize="30"
+                FontAttributes="Bold"
+                VerticalOptions="Center"/>
+
+            <Button
+                Grid.Column="1"
+                Margin="0,0,10,0"
+                Text="Sort"
+                CornerRadius="10"
+                Clicked="SortButton_Clicked"/>
+
+            <Button
+                Grid.Column="2"
+                Text="Import"
+                BackgroundColor="Orange"
+                TextColor="White"
+                CornerRadius="10"
+                Clicked="AddMusicButton_Clicked"/>
+
+        </Grid>
 
         <SearchBar
+            Grid.Row="1"
             x:Name="SearchBar"
             Placeholder="Search songs..."
             TextChanged="SearchBar_TextChanged"/>
 
-        <Label
-            Text="Music Library"
-            FontSize="28"
-            FontAttributes="Bold"/>
-
-        <Button
-            x:Name="AddMusicButton"
-            Margin="0,15,0,0"
-            Text="Import Music"
-            Clicked="AddMusicButton_Clicked"/>
-
         <CollectionView
+            Grid.Row="2"
             ItemsSource="{Binding Songs}"
             SelectionMode="None">
 
@@ -32,49 +53,59 @@
 
                 <DataTemplate>
 
-                    <Grid
-                        Padding="10"
-                        ColumnDefinitions="*,Auto"
-                        RowDefinitions="Auto">
+                    <Border
+                        Margin="0,0,0,12"
+                        Padding="12"
+                        Stroke="#DDDDDD"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
 
-                        <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
 
-                            <Label
-                                Text="{Binding Title}"
-                                FontSize="18"
-                                FontAttributes="Bold"/>
+                            <VerticalStackLayout Spacing="3">
 
-                            <Label
-                                Text="{Binding Artist}"
-                                FontSize="14"/>
+                                <Label
+                                    Text="{Binding Title}"
+                                    FontSize="18"
+                                    FontAttributes="Bold"/>
 
-                            <Label
-                                Text="{Binding Album}"
-                                FontSize="12"
-                                Opacity="0.7"/>
+                                <Label
+                                    Text="{Binding Artist}"
+                                    FontSize="14"/>
 
-                        </VerticalStackLayout>
+                                <Label
+                                    Text="{Binding Album}"
+                                    FontSize="12"
+                                    Opacity="0.6"/>
 
-                        <HorizontalStackLayout
-                            Grid.Column="1"
-                            Spacing="8"
-                            VerticalOptions="Center">
+                            </VerticalStackLayout>
 
-                            <Button
-                                Text="▶"
-                                WidthRequest="45"
-                                Clicked="PlaySong_Clicked"
-                                CommandParameter="{Binding}" />
+                            <HorizontalStackLayout
+                                Grid.Column="1"
+                                Spacing="8"
+                                VerticalOptions="Center">
 
-                            <Button
-                                Text="🗑"
-                                WidthRequest="45"
-                                Clicked="DeleteSong_Clicked"
-                                CommandParameter="{Binding}" />
+                                <Button
+                                    WidthRequest="42"
+                                    HeightRequest="42"
+                                    CornerRadius="21"
+                                    Text="▶"
+                                    Clicked="PlaySong_Clicked"
+                                    CommandParameter="{Binding}" />
 
-                        </HorizontalStackLayout>
+                                <Button
+                                    WidthRequest="42"
+                                    HeightRequest="42"
+                                    CornerRadius="21"
+                                    Text="🗑"
+                                    Clicked="DeleteSong_Clicked"
+                                    CommandParameter="{Binding}" />
 
-                    </Grid>
+                            </HorizontalStackLayout>
+
+                        </Grid>
+
+                    </Border>
 
                 </DataTemplate>
 
@@ -82,6 +113,6 @@
 
         </CollectionView>
 
-    </VerticalStackLayout>
+    </Grid>
 
 </ContentPage>

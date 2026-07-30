@@ -78,21 +78,16 @@ public partial class NowPlayingPage : ContentPage
 
             CurrentTimeLabel.Text =
                 TimeSpan.FromSeconds(audioService.Position)
-                .ToString(@"mm\:ss");
+                    .ToString(@"mm\:ss");
 
             DurationLabel.Text =
                 TimeSpan.FromSeconds(audioService.Duration)
-                .ToString(@"mm\:ss");
+                    .ToString(@"mm\:ss");
+
+            PlayPauseButton.Text =
+                audioService.IsPlaying ? "⏸" : "▶";
 
             UpdateButtons();
-
-            RepeatButton.Text = audioService.RepeatMode switch
-            {
-                0 => "➡️", // Off
-                1 => "🔁", // Repeat All
-                2 => "🔂", // Repeat One
-                _ => "➡️"
-            };
         });
     }
 
@@ -100,7 +95,7 @@ public partial class NowPlayingPage : ContentPage
     {
         if (audioService.Shuffle)
         {
-            ShuffleButton.BackgroundColor = Colors.DodgerBlue;
+            ShuffleButton.BackgroundColor = Colors.Orange;
             ShuffleButton.TextColor = Colors.White;
         }
         else
@@ -119,13 +114,13 @@ public partial class NowPlayingPage : ContentPage
 
             case 1:
                 RepeatButton.Text = "🔁";
-                RepeatButton.BackgroundColor = Colors.DodgerBlue;
+                RepeatButton.BackgroundColor = Colors.Orange;
                 RepeatButton.TextColor = Colors.White;
                 break;
 
             case 2:
                 RepeatButton.Text = "🔂";
-                RepeatButton.BackgroundColor = Colors.DodgerBlue;
+                RepeatButton.BackgroundColor = Colors.Orange;
                 RepeatButton.TextColor = Colors.White;
                 break;
         }
@@ -179,6 +174,6 @@ public partial class NowPlayingPage : ContentPage
         if (audioService.RepeatMode > 2)
             audioService.RepeatMode = 0;
 
-        UpdatePlayer();
+        UpdateButtons();
     }
 }

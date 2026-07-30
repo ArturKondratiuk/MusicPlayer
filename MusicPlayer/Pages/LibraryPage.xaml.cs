@@ -11,14 +11,15 @@ public partial class LibraryPage : ContentPage
     private readonly LibraryService libraryService = new();
     private readonly Id3Service id3Service = new();
     private readonly SettingsService settingsService = new();
+
     private List<Song> allSongs = new();
 
     private readonly AudioService audioService;
     private readonly IServiceProvider serviceProvider;
 
     public LibraryPage(
-    AudioService audioService,
-    IServiceProvider serviceProvider)
+        AudioService audioService,
+        IServiceProvider serviceProvider)
     {
         InitializeComponent();
 
@@ -41,22 +42,7 @@ public partial class LibraryPage : ContentPage
 
         allSongs = await libraryService.LoadLibraryAsync();
 
-        allSongs = settings.DefaultSort switch
-        {
-            "Artist" => allSongs
-                .OrderBy(s => s.Artist)
-                .ThenBy(s => s.Title)
-                .ToList(),
-
-            "Album" => allSongs
-                .OrderBy(s => s.Album)
-                .ThenBy(s => s.Title)
-                .ToList(),
-
-            _ => allSongs
-                .OrderBy(s => s.Title)
-                .ToList()
-        };
+        allSongs = SortSongs(allSongs, settings.DefaultSort);
 
         viewModel.Songs.Clear();
 
@@ -106,29 +92,28 @@ public partial class LibraryPage : ContentPage
 
         foreach (var file in files)
         {
-            if (viewModel.Songs.Any(s => s.FilePath == file.FullPath))
+            if (allSongs.Any(s => s.FilePath == file.FullPath))
                 continue;
 
             try
             {
-                var song = id3Service.ReadSong(file.FullPath);
+                var song = id3Service.ReadSong(file.FullPath);  
 
-                viewModel.AddSong(song);
+                allSongs.Add(song);
 
                 added = true;
             }
             catch
             {
-
             }
         }
 
         if (!added)
             return;
 
-        audioService.SetPlaylist(viewModel.Songs.ToList());
+        await libraryService.SaveLibraryAsync(allSongs);
 
-        await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
+        await LoadLibraryAsync();
     }
 
     private async void PlaySong_Clicked(object sender, EventArgs e)
@@ -165,13 +150,51 @@ public partial class LibraryPage : ContentPage
         if (audioService.CurrentSong == song)
             audioService.Stop();
 
-        viewModel.RemoveSong(song);
-
         allSongs.Remove(song);
 
-        audioService.SetPlaylist(viewModel.Songs.ToList());
+        await libraryService.SaveLibraryAsync(allSongs);
 
-        await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
+        await LoadLibraryAsync();
+    }
+
+    private List<Song> SortSongs(List<Song> songs, string sort)
+    {
+        return sort switch
+        {
+            "Artist" => songs
+                .OrderBy(s => s.Artist)
+                .ThenBy(s => s.Title)
+                .ToList(),
+
+            "Album" => songs
+                .OrderBy(s => s.Album)
+                .ThenBy(s => s.Title)
+                .ToList(),
+
+            _ => songs
+                .OrderBy(s => s.Title)
+                .ToList()
+        };
+    }
+
+    private async void SortButton_Clicked(object sender, EventArgs e)
+    {
+        string? result = await DisplayActionSheet(
+            "Sort library",
+            "Cancel",
+            null,
+            "Title",
+            "Artist",
+            "Album");
+
+        if (string.IsNullOrEmpty(result) || result == "Cancel")
+            return;
+
+        var settings = await settingsService.LoadAsync();
+
+        settings.DefaultSort = result;
+
+        await settingsService.SaveAsync(settings);
 
         await LoadLibraryAsync();
     }
