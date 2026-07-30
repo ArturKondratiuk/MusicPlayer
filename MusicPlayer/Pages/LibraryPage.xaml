@@ -19,7 +19,9 @@
             FontAttributes="Bold"/>
 
         <Button
-            Text="Add Music"
+            x:Name="AddMusicButton"
+            Margin="0,15,0,0"
+            Text="Import Music"
             Clicked="AddMusicButton_Clicked"/>
 
         <CollectionView

@@ -78,7 +78,8 @@ public class AudioService
         {
             song.AlbumArt = await albumArtService.GetCoverUrlAsync(
                 song.Artist,
-                song.Album);
+                song.Album,
+                song.Title);
 
             await libraryService.SaveLibraryAsync(Playlist);
         }

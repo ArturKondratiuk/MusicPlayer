@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Plugin.Maui.Audio;
+using MusicPlayer.Pages;
 using MusicPlayer.Services;
 using MusicPlayer.ViewModels;
-using MusicPlayer.Pages;
+using Plugin.Maui.Audio;
 
 namespace MusicPlayer
 {

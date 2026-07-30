@@ -28,15 +28,13 @@ public class Id3Service
             if (tag != null)
             {
                 if (!string.IsNullOrWhiteSpace(tag.Title))
-                    song.Title = tag.Title;
+                    song.Title = Clean(tag.Title);
 
                 if (!string.IsNullOrWhiteSpace(tag.Album))
-                    song.Album = tag.Album;
+                    song.Album = Clean(tag.Album);
 
                 if (tag.Artists != null)
-                {
-                    song.Artist = tag.Artists.ToString();
-                }
+                    song.Artist = Clean(tag.Artists.ToString());
             }
         }
         catch
@@ -45,5 +43,12 @@ public class Id3Service
         }
 
         return song;
+    }
+
+    private static string Clean(string? value)
+    {
+        return value?
+            .Replace("\0", "")
+            .Trim() ?? "";
     }
 }

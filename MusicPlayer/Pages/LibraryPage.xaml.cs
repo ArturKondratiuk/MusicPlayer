@@ -17,8 +17,8 @@ public partial class LibraryPage : ContentPage
     private readonly IServiceProvider serviceProvider;
 
     public LibraryPage(
-        AudioService audioService,
-        IServiceProvider serviceProvider)
+    AudioService audioService,
+    IServiceProvider serviceProvider)
     {
         InitializeComponent();
 
@@ -94,25 +94,41 @@ public partial class LibraryPage : ContentPage
 
     private async void AddMusicButton_Clicked(object sender, EventArgs e)
     {
-        var result = await FilePicker.Default.PickAsync(new PickOptions
+        var files = await FilePicker.Default.PickMultipleAsync(new PickOptions
         {
-            PickerTitle = "Select music"
+            PickerTitle = "Select music files"
         });
 
-        if (result == null)
+        if (files == null)
             return;
 
-        Song song = id3Service.ReadSong(result.FullPath);
+        bool added = false;
 
-        viewModel.AddSong(song);
+        foreach (var file in files)
+        {
+            if (viewModel.Songs.Any(s => s.FilePath == file.FullPath))
+                continue;
 
-        allSongs.Add(song);
+            try
+            {
+                var song = id3Service.ReadSong(file.FullPath);
+
+                viewModel.AddSong(song);
+
+                added = true;
+            }
+            catch
+            {
+
+            }
+        }
+
+        if (!added)
+            return;
 
         audioService.SetPlaylist(viewModel.Songs.ToList());
 
         await libraryService.SaveLibraryAsync(viewModel.Songs.ToList());
-
-        await LoadLibraryAsync();
     }
 
     private async void PlaySong_Clicked(object sender, EventArgs e)
