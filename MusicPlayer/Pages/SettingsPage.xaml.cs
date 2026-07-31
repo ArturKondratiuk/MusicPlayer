@@ -22,6 +22,14 @@ public partial class SettingsPage : ContentPage
 
         DarkModeSwitch.IsToggled = settings.DarkMode;
 
+        ConfirmDeleteSwitch.IsToggled = settings.ConfirmDelete;
+
+        AlbumArtSwitch.IsToggled = settings.DownloadAlbumArt;
+
+        RememberShuffleSwitch.IsToggled = settings.RememberShuffle;
+
+        RememberRepeatSwitch.IsToggled = settings.RememberRepeat;
+
         SortPicker.SelectedItem = settings.DefaultSort;
 
         ApplyTheme();
@@ -45,12 +53,28 @@ public partial class SettingsPage : ContentPage
     {
         Application.Current!.UserAppTheme =
             settings.DarkMode
-            ? AppTheme.Dark
-            : AppTheme.Light;
+                ? AppTheme.Dark
+                : AppTheme.Light;
     }
 
     private async void Save_Clicked(object sender, EventArgs e)
     {
+        settings.DarkMode = DarkModeSwitch.IsToggled;
+
+        settings.ConfirmDelete = ConfirmDeleteSwitch.IsToggled;
+
+        settings.DownloadAlbumArt = AlbumArtSwitch.IsToggled;
+
+        settings.RememberShuffle = RememberShuffleSwitch.IsToggled;
+
+        settings.RememberRepeat = RememberRepeatSwitch.IsToggled;
+
+        if (!settings.RememberShuffle)
+            settings.ShuffleEnabled = false;
+
+        if (!settings.RememberRepeat)
+            settings.RepeatModeValue = 0;
+
         settings.DefaultSort =
             SortPicker.SelectedItem?.ToString() ?? "Title";
 

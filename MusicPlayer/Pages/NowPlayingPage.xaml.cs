@@ -6,6 +6,8 @@ public partial class NowPlayingPage : ContentPage
 {
     private readonly AudioService audioService;
 
+    private readonly SettingsService settingsService = new();
+
     private bool isDragging;
 
     public NowPlayingPage(AudioService audioService)
@@ -27,6 +29,16 @@ public partial class NowPlayingPage : ContentPage
 
         UpdateSong();
         UpdatePlayer();
+        UpdateButtons();
+
+        var settings = await settingsService.LoadAsync();
+
+        if (settings.RememberShuffle)
+            audioService.Shuffle = settings.ShuffleEnabled;
+
+        if (settings.RememberRepeat)
+            audioService.RepeatMode = settings.RepeatModeValue;
+
         UpdateButtons();
 
         VolumeSlider.Value = audioService.GetVolume();
@@ -180,6 +192,14 @@ public partial class NowPlayingPage : ContentPage
 
         audioService.Shuffle = !audioService.Shuffle;
 
+        var settings = await settingsService.LoadAsync();
+
+        if (settings.RememberShuffle)
+        {
+            settings.ShuffleEnabled = audioService.Shuffle;
+            await settingsService.SaveAsync(settings);
+        }
+
         UpdateButtons();
     }
 
@@ -193,9 +213,15 @@ public partial class NowPlayingPage : ContentPage
         if (audioService.RepeatMode > 2)
             audioService.RepeatMode = 0;
 
-        UpdatePlayer();
+        var settings = await settingsService.LoadAsync();
 
-        RepeatButton.Rotation = 0;
+        if (settings.RememberRepeat)
+        {
+            settings.RepeatModeValue = audioService.RepeatMode;
+            await settingsService.SaveAsync(settings);
+        }
+
+        UpdatePlayer();
     }
 
     private void VolumeSlider_ValueChanged(object sender, ValueChangedEventArgs e)

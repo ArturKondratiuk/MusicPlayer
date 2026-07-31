@@ -76,7 +76,10 @@ public class AudioService
 
         player.Play();
 
-        if (string.IsNullOrWhiteSpace(song.AlbumArt))
+        var settings = await new SettingsService().LoadAsync();
+
+        if (settings.DownloadAlbumArt &&
+            string.IsNullOrWhiteSpace(song.AlbumArt))
         {
             song.AlbumArt = await albumArtService.GetCoverUrlAsync(
                 song.Artist,

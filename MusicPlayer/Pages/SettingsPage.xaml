@@ -6,45 +6,245 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Settings">
 
-    <VerticalStackLayout
-        Padding="20"
-        Spacing="20">
+    <ScrollView>
 
-        <Label
-            FontSize="28"
-            FontAttributes="Bold"
-            Text="Settings"/>
-
-        <HorizontalStackLayout>
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="18">
 
             <Label
-                VerticalOptions="Center"
-                Text="Dark Mode"/>
+                Text="Settings"
+                FontSize="30"
+                FontAttributes="Bold"/>
 
-            <Switch
-                x:Name="DarkModeSwitch"
-                HorizontalOptions="EndAndExpand"
-                Toggled="DarkModeSwitch_Toggled"/>
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
 
-        </HorizontalStackLayout>
+                <Grid ColumnDefinitions="*,Auto">
 
-        <Label Text="Default Library Sort"/>
+                    <VerticalStackLayout>
 
-        <Picker
-            x:Name="SortPicker">
+                        <Label
+                            Text="Dark Mode"
+                            FontSize="18"
+                            FontAttributes="Bold"/>
 
-            <Picker.Items>
-                <x:String>Title</x:String>
-                <x:String>Artist</x:String>
-                <x:String>Album</x:String>
-            </Picker.Items>
+                        <Label
+                            Text="Use the dark application theme."
+                            FontSize="13"
+                            Opacity="0.6"/>
 
-        </Picker>
+                    </VerticalStackLayout>
 
-        <Button
-            Text="Save"
-            Clicked="Save_Clicked"/>
+                    <Switch
+                        x:Name="DarkModeSwitch"
+                        Grid.Column="1"
+                        VerticalOptions="Center"
+                        Toggled="DarkModeSwitch_Toggled"/>
 
-    </VerticalStackLayout>
+                </Grid>
+
+            </Border>
+
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label
+                        Text="Default Library Sort"
+                        FontSize="18"
+                        FontAttributes="Bold"/>
+
+                    <Picker x:Name="SortPicker">
+
+                        <Picker.Items>
+                            <x:String>Title</x:String>
+                            <x:String>Artist</x:String>
+                            <x:String>Album</x:String>
+                        </Picker.Items>
+
+                    </Picker>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout>
+
+                        <Label
+                            Text="Confirm Before Deleting"
+                            FontSize="18"
+                            FontAttributes="Bold"/>
+
+                        <Label
+                            Text="Ask before removing songs."
+                            FontSize="13"
+                            Opacity="0.6"/>
+
+                    </VerticalStackLayout>
+
+                    <Switch
+                        x:Name="ConfirmDeleteSwitch"
+                        Grid.Column="1"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+
+            </Border>
+
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout>
+
+                        <Label
+                            Text="Download Album Artwork"
+                            FontSize="18"
+                            FontAttributes="Bold"/>
+
+                        <Label
+                            Text="Automatically download cover art."
+                            FontSize="13"
+                            Opacity="0.6"/>
+
+                    </VerticalStackLayout>
+
+                    <Switch
+                        x:Name="AlbumArtSwitch"
+                        Grid.Column="1"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+
+            </Border>
+
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout>
+
+                        <Label
+                            Text="Remember Shuffle Mode"
+                            FontSize="18"
+                            FontAttributes="Bold"/>
+
+                        <Label
+                            Text="Keep Shuffle enabled after restart."
+                            FontSize="13"
+                            Opacity="0.6"/>
+
+                    </VerticalStackLayout>
+
+                    <Switch
+                        x:Name="RememberShuffleSwitch"
+                        Grid.Column="1"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+
+            </Border>
+
+            <!-- Repeat -->
+
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout>
+
+                        <Label
+                            Text="Remember Repeat Mode"
+                            FontSize="18"
+                            FontAttributes="Bold"/>
+
+                        <Label
+                            Text="Keep Repeat mode after restart."
+                            FontSize="13"
+                            Opacity="0.6"/>
+
+                    </VerticalStackLayout>
+
+                    <Switch
+                        x:Name="RememberRepeatSwitch"
+                        Grid.Column="1"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+
+            </Border>
+
+            <!-- About -->
+
+            <Border
+                Padding="15"
+                Stroke="#DDDDDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12">
+
+                <VerticalStackLayout Spacing="4">
+
+                    <Label
+                        Text="Music Player"
+                        FontSize="18"
+                        FontAttributes="Bold"/>
+
+                    <Label
+                        Text="Version 1.0"/>
+
+                    <Label
+                        Text=".NET MAUI"/>
+
+                    <Label
+                        Text="Plugin.Maui.Audio"/>
+
+                    <Label
+                        Text="ID3.NET"/>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Button
+                HeightRequest="50"
+                Margin="0,10,0,20"
+                BackgroundColor="Orange"
+                TextColor="White"
+                CornerRadius="10"
+                FontAttributes="Bold"
+                Text="Save Settings"
+                Clicked="Save_Clicked"/>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
 
 </ContentPage>

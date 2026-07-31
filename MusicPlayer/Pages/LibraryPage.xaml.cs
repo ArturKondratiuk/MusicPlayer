@@ -158,14 +158,19 @@ public partial class LibraryPage : ContentPage
         if (button.CommandParameter is not Song song)
             return;
 
-        bool answer = await DisplayAlert(
-            "Delete Song",
-            $"Delete \"{song.Title}\"?",
-            "Delete",
-            "Cancel");
+        var settings = await settingsService.LoadAsync();
 
-        if (!answer)
-            return;
+        if (settings.ConfirmDelete)
+        {
+            bool answer = await DisplayAlert(
+                "Delete Song",
+                $"Delete \"{song.Title}\"?",
+                "Delete",
+                "Cancel");
+
+            if (!answer)
+                return;
+        }
 
         if (audioService.CurrentSong == song)
             audioService.Stop();
