@@ -81,6 +81,14 @@
                                     WidthRequest="42"
                                     HeightRequest="42"
                                     CornerRadius="21"
+                                    Text="✏️"
+                                    Clicked="RenamePlaylist_Clicked"
+                                    CommandParameter="{Binding}"/>
+
+                                <Button
+                                    WidthRequest="42"
+                                    HeightRequest="42"
+                                    CornerRadius="21"
                                     Text="🗑"
                                     Clicked="DeletePlaylist_Clicked"
                                     CommandParameter="{Binding}"/>

@@ -29,26 +29,9 @@ public partial class PlaylistDetailsPage : ContentPage
 
     private async void AddSongs_Clicked(object sender, EventArgs e)
     {
-        var library = await new LibraryService().LoadLibraryAsync();
+        var page = new AddSongsPage(playlist);
 
-        string action = await DisplayActionSheet(
-            "Choose song",
-            "Cancel",
-            null,
-            library.Select(s => s.Title).ToArray());
-
-        if (action == "Cancel")
-            return;
-
-        Song? song = library.FirstOrDefault(s => s.Title == action);
-
-        if (song == null)
-            return;
-
-        if (playlist.Songs.Any(s => s.FilePath == song.FilePath))
-            return;
-
-        playlist.Songs.Add(song);
+        await Navigation.PushAsync(page);
 
         SongsCollectionView.ItemsSource = null;
         SongsCollectionView.ItemsSource = playlist.Songs;

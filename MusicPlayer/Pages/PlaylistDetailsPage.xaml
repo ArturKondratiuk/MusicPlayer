@@ -6,24 +6,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Playlist">
 
-    <VerticalStackLayout Padding="20">
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto,Auto,*"
+        RowSpacing="15">
+
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="*,Auto,Auto">
+
+            <Label
+                x:Name="PlaylistNameLabel"
+                FontSize="30"
+                FontAttributes="Bold"
+                VerticalOptions="Center"/>
+
+            <Button
+                Grid.Column="1"
+                Margin="0,0,10,0"
+                Text="Add"
+                BackgroundColor="Orange"
+                TextColor="White"
+                CornerRadius="10"
+                Clicked="AddSongs_Clicked"/>
+
+            <Button
+                Grid.Column="2"
+                Text="Play"
+                CornerRadius="10"
+                Clicked="PlayPlaylist_Clicked"/>
+
+        </Grid>
 
         <Label
-            x:Name="PlaylistNameLabel"
-            FontSize="30"
+            Grid.Row="1"
+            Text="Songs"
+            FontSize="18"
             FontAttributes="Bold"/>
 
-        <Button
-            Margin="0,15,0,0"
-            Text="▶ Play Playlist"
-            Clicked="PlayPlaylist_Clicked"/>
-
-        <Button
-            Margin="0,15,0,15"
-            Text="Add Songs"
-            Clicked="AddSongs_Clicked"/>
-
         <CollectionView
+            Grid.Row="2"
             x:Name="SongsCollectionView"
             SelectionMode="Single"
             SelectionChanged="SongsCollectionView_SelectionChanged">
@@ -32,32 +54,46 @@
 
                 <DataTemplate>
 
-                    <Grid
-                        Padding="10"
-                        ColumnDefinitions="*,Auto">
+                    <Border
+                        Margin="0,0,0,12"
+                        Padding="12"
+                        Stroke="#DDDDDD"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
 
-                        <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
 
-                            <Label
-                                Text="{Binding Title}"
-                                FontAttributes="Bold"/>
+                            <VerticalStackLayout
+                                Spacing="3">
 
-                            <Label
-                                Text="{Binding Artist}"/>
+                                <Label
+                                    Text="{Binding Title}"
+                                    FontSize="18"
+                                    FontAttributes="Bold"/>
 
-                            <Label
-                                FontSize="12"
-                                Text="{Binding Album}"/>
+                                <Label
+                                    Text="{Binding Artist}"
+                                    FontSize="14"/>
 
-                        </VerticalStackLayout>
+                                <Label
+                                    Text="{Binding Album}"
+                                    FontSize="12"
+                                    Opacity="0.6"/>
 
-                        <Button
-                            Grid.Column="1"
-                            Text="Delete"
-                            CommandParameter="{Binding}"
-                            Clicked="DeleteSong_Clicked"/>
+                            </VerticalStackLayout>
 
-                    </Grid>
+                            <Button
+                                Grid.Column="1"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                CornerRadius="21"
+                                Text="🗑"
+                                CommandParameter="{Binding}"
+                                Clicked="DeleteSong_Clicked"/>
+
+                        </Grid>
+
+                    </Border>
 
                 </DataTemplate>
 
@@ -65,6 +101,6 @@
 
         </CollectionView>
 
-    </VerticalStackLayout>
+    </Grid>
 
 </ContentPage>

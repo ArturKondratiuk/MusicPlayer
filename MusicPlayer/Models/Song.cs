@@ -17,4 +17,5 @@ public class Song
     public string Album { get; set; } = "";
 
     public string? AlbumArt { get; set; }
+
 }

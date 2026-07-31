@@ -97,4 +97,27 @@ public partial class PlaylistsPage : ContentPage
 
         await Navigation.PushAsync(page);
     }
+
+    private async void RenamePlaylist_Clicked(object sender, EventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+
+        if (button.CommandParameter is not Playlist playlist)
+            return;
+
+        string? newName = await DisplayPromptAsync(
+            "Rename Playlist",
+            "New name:",
+            initialValue: playlist.Name);
+
+        if (string.IsNullOrWhiteSpace(newName))
+            return;
+
+        playlist.Name = newName.Trim();
+
+        await SaveAsync();
+
+        await LoadAsync();
+    }
 }

@@ -6,39 +6,72 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Add Songs">
 
-    <VerticalStackLayout Padding="20">
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto,Auto,*,Auto"
+        RowSpacing="15">
 
         <Label
-            Text="Select songs"
-            FontSize="28"
+            Grid.Row="0"
+            Text="Add Songs"
+            FontSize="30"
             FontAttributes="Bold"/>
+
+        <SearchBar
+            x:Name="SearchBar"
+            Grid.Row="1"
+            Placeholder="Search songs..."
+            TextChanged="SearchBar_TextChanged"/>
 
         <CollectionView
             x:Name="LibraryView"
-            SelectionMode="Multiple">
+            Grid.Row="2"
+            SelectionMode="None">
 
             <CollectionView.ItemTemplate>
 
                 <DataTemplate>
 
-                    <Grid Padding="10">
+                    <Border
+                        Margin="0,0,0,12"
+                        Padding="12"
+                        Stroke="#DDDDDD"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
 
-                        <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
 
-                            <Label
-                                Text="{Binding Title}"
-                                FontAttributes="Bold"/>
+                            <VerticalStackLayout
+                                Spacing="3">
 
-                            <Label
-                                Text="{Binding Artist}"/>
+                                <Label
+                                    Text="{Binding Title}"
+                                    FontSize="18"
+                                    FontAttributes="Bold"/>
 
-                            <Label
-                                FontSize="12"
-                                Text="{Binding Album}"/>
+                                <Label
+                                    Text="{Binding Artist}"
+                                    FontSize="14"/>
 
-                        </VerticalStackLayout>
+                                <Label
+                                    Text="{Binding Album}"
+                                    FontSize="12"
+                                    Opacity="0.6"/>
 
-                    </Grid>
+                            </VerticalStackLayout>
+
+                            <Button
+                                Grid.Column="1"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                CornerRadius="21"
+                                Text="+"
+                                Clicked="SelectSong_Clicked"
+                                CommandParameter="{Binding}" />
+
+                        </Grid>
+
+                    </Border>
 
                 </DataTemplate>
 
@@ -47,10 +80,14 @@
         </CollectionView>
 
         <Button
-            Margin="0,20,0,0"
+            Grid.Row="3"
+            HeightRequest="50"
+            CornerRadius="10"
+            BackgroundColor="Orange"
+            TextColor="White"
             Text="Add Selected Songs"
             Clicked="Save_Clicked"/>
 
-    </VerticalStackLayout>
+    </Grid>
 
 </ContentPage>
