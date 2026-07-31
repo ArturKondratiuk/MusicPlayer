@@ -12,17 +12,26 @@ public partial class SettingsPage : ContentPage
     public SettingsPage()
     {
         InitializeComponent();
+    }
 
-        Loaded += async (_, _) =>
-        {
-            settings = await settingsService.LoadAsync();
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
 
-            DarkModeSwitch.IsToggled = settings.DarkMode;
+        settings = await settingsService.LoadAsync();
 
-            SortPicker.SelectedItem = settings.DefaultSort;
+        DarkModeSwitch.IsToggled = settings.DarkMode;
 
-            ApplyTheme();
-        };
+        SortPicker.SelectedItem = settings.DefaultSort;
+
+        ApplyTheme();
+
+        Content.Opacity = 0;
+        Content.TranslationY = 20;
+
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private void DarkModeSwitch_Toggled(object sender, ToggledEventArgs e)

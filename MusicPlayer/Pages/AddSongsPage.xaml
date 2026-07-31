@@ -61,6 +61,7 @@
                             </VerticalStackLayout>
 
                             <Button
+                                x:Name="SaveButton"
                                 Grid.Column="1"
                                 WidthRequest="42"
                                 HeightRequest="42"

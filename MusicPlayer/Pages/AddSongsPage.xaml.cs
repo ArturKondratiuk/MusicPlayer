@@ -32,6 +32,13 @@ public partial class AddSongsPage : ContentPage
             .ToList();
 
         LibraryView.ItemsSource = library;
+
+        Content.Opacity = 0;
+        Content.TranslationY = 20;
+
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)

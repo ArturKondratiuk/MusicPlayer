@@ -25,8 +25,20 @@ public partial class PlaylistsPage : ContentPage
         this.serviceProvider = serviceProvider;
 
         BindingContext = viewModel;
+    }
 
-        Loaded += async (_, _) => await LoadAsync();
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        Content.Opacity = 0;
+        Content.TranslationY = 20;
+
+        await LoadAsync();
+
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private async Task LoadAsync()
@@ -37,6 +49,13 @@ public partial class PlaylistsPage : ContentPage
 
         foreach (var playlist in playlists)
             viewModel.AddPlaylist(playlist);
+
+        PlaylistsCollection.Opacity = 0;
+        PlaylistsCollection.TranslationY = 20;
+
+        await Task.WhenAll(
+            PlaylistsCollection.FadeTo(1, 220),
+            PlaylistsCollection.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private async Task SaveAsync()

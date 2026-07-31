@@ -32,6 +32,7 @@
         </Grid>
 
         <CollectionView
+            x:Name="PlaylistsCollection"
             Grid.Row="1"
             ItemsSource="{Binding Playlists}"
             SelectionMode="None">

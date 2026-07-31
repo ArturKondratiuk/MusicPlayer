@@ -15,7 +15,7 @@ public partial class NowPlayingPage : ContentPage
         this.audioService = audioService;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
 
@@ -30,6 +30,13 @@ public partial class NowPlayingPage : ContentPage
         UpdateButtons();
 
         VolumeSlider.Value = audioService.GetVolume();
+
+        Content.Opacity = 0;
+        Content.TranslationY = 20;
+
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     protected override void OnDisappearing()
@@ -140,8 +147,12 @@ public partial class NowPlayingPage : ContentPage
         audioService.Seek(ProgressSlider.Value);
     }
 
-    private void PlayPause_Clicked(object sender, EventArgs e)
+    private async void PlayPause_Clicked(object sender, EventArgs e)
     {
+        await PlayPauseButton.ScaleTo(0.9, 60);
+        await PlayPauseButton.ScaleTo(1.1, 60);
+        await PlayPauseButton.ScaleTo(1, 60);
+
         audioService.TogglePlayPause();
     }
 
@@ -162,22 +173,31 @@ public partial class NowPlayingPage : ContentPage
         await Navigation.PopAsync();
     }
 
-    private void Shuffle_Clicked(object sender, EventArgs e)
+    private async void Shuffle_Clicked(object sender, EventArgs e)
     {
+        await ShuffleButton.ScaleTo(0.85, 70);
+        await ShuffleButton.ScaleTo(1, 70);
+
         audioService.Shuffle = !audioService.Shuffle;
 
         UpdateButtons();
     }
 
-    private void Repeat_Clicked(object sender, EventArgs e)
+    private async void Repeat_Clicked(object sender, EventArgs e)
     {
+        await RepeatButton.RotateTo(180, 120);
+        await RepeatButton.RotateTo(360, 0);
+
         audioService.RepeatMode++;
 
         if (audioService.RepeatMode > 2)
             audioService.RepeatMode = 0;
 
-        UpdateButtons();
+        UpdatePlayer();
+
+        RepeatButton.Rotation = 0;
     }
+
     private void VolumeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
     {
         audioService.SetVolume(e.NewValue);

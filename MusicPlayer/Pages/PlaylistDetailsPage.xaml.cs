@@ -25,6 +25,23 @@ public partial class PlaylistDetailsPage : ContentPage
         PlaylistNameLabel.Text = playlist.Name;
 
         SongsCollectionView.ItemsSource = playlist.Songs;
+
+        SongsCollectionView.Opacity = 0;
+        SongsCollectionView.TranslationY = 20;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        SongsCollectionView.ItemsSource = playlist.Songs;
+
+        Content.Opacity = 0;
+        Content.TranslationY = 20;
+
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private async void AddSongs_Clicked(object sender, EventArgs e)

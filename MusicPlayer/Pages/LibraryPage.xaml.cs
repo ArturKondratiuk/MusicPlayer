@@ -33,7 +33,14 @@ public partial class LibraryPage : ContentPage
     {
         base.OnAppearing();
 
+        Content.Opacity = 0;
+        Content.TranslationY = 20;
+
         await LoadLibraryAsync();
+
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private async Task LoadLibraryAsync()
@@ -49,7 +56,14 @@ public partial class LibraryPage : ContentPage
         foreach (var song in allSongs)
             viewModel.AddSong(song);
 
-        audioService.SetPlaylist(allSongs);
+        audioService.SetPlaylist(allSongs); 
+
+        SongsCollection.Opacity = 0;
+        SongsCollection.TranslationY = 20;
+
+        await Task.WhenAll(
+            SongsCollection.FadeTo(1, 220),
+            SongsCollection.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
@@ -114,6 +128,12 @@ public partial class LibraryPage : ContentPage
         await libraryService.SaveLibraryAsync(allSongs);
 
         await LoadLibraryAsync();
+
+        AddMusicButton.BackgroundColor = Colors.Green;
+
+        await Task.Delay(500);
+
+        AddMusicButton.BackgroundColor = Colors.Orange;
     }
 
     private async void PlaySong_Clicked(object sender, EventArgs e)

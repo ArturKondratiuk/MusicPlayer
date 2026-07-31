@@ -29,6 +29,7 @@
                 Clicked="SortButton_Clicked"/>
 
             <Button
+                x:Name="AddMusicButton"
                 Grid.Column="2"
                 Text="Import"
                 BackgroundColor="Orange"
@@ -45,6 +46,7 @@
             TextChanged="SearchBar_TextChanged"/>
 
         <CollectionView
+            x:Name="SongsCollection"
             Grid.Row="2"
             ItemsSource="{Binding Songs}"
             SelectionMode="None">
