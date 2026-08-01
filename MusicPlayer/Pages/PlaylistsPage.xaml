@@ -12,6 +12,7 @@
         RowSpacing="15">
 
         <Grid
+            x:Name="TopBar"
             Grid.Row="0"
             ColumnDefinitions="*,Auto">
 
@@ -30,6 +31,42 @@
                 Clicked="CreatePlaylist_Clicked"/>
 
         </Grid>
+
+        <VerticalStackLayout
+            x:Name="EmptyState"
+            Grid.Row="1"
+            IsVisible="False"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Spacing="12">
+
+            <Label
+                FontSize="72"
+                HorizontalTextAlignment="Center"
+                Text="📂"/>
+
+            <Label
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"
+                Text="No playlists yet"/>
+
+            <Label
+                FontSize="16"
+                HorizontalTextAlignment="Center"
+                Opacity="0.7"
+                Text="Create your first playlist to organize your music."/>
+
+            <Button
+                WidthRequest="180"
+                HeightRequest="45"
+                CornerRadius="10"
+                BackgroundColor="Orange"
+                TextColor="White"
+                Text="Create Playlist"
+                Clicked="CreatePlaylist_Clicked"/>
+
+        </VerticalStackLayout>
 
         <CollectionView
             x:Name="PlaylistsCollection"

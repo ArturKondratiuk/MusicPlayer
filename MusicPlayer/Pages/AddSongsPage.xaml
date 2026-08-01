@@ -23,8 +23,62 @@
             Placeholder="Search songs..."
             TextChanged="SearchBar_TextChanged"/>
 
+        <VerticalStackLayout
+            x:Name="EmptyState"
+            Grid.Row="2"
+            IsVisible="False"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Spacing="12">
+
+            <Label
+                x:Name="EmptyIcon"
+                FontSize="70"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                x:Name="EmptyTitle"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                x:Name="EmptyMessage"
+                FontSize="16"
+                HorizontalTextAlignment="Center"
+                Opacity="0.7"/>
+
+        </VerticalStackLayout>
+
+        <VerticalStackLayout
+            x:Name="LibraryEmptyState"
+            Grid.Row="2"
+            IsVisible="False"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Spacing="12">
+
+            <Label
+                Text="🎵"
+                FontSize="72"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                Text="Library is empty"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                Text="Import music before creating playlists."
+                FontSize="16"
+                Opacity="0.7"
+                HorizontalTextAlignment="Center"/>
+
+        </VerticalStackLayout>
+
         <CollectionView
-            x:Name="LibraryView"
+            x:Name="SongsCollection"
             Grid.Row="2"
             SelectionMode="None">
 
@@ -61,14 +115,15 @@
                             </VerticalStackLayout>
 
                             <Button
-                                x:Name="SaveButton"
                                 Grid.Column="1"
                                 WidthRequest="42"
                                 HeightRequest="42"
                                 CornerRadius="21"
+                                BackgroundColor="#EEEEEE"
                                 Text="+"
-                                Clicked="SelectSong_Clicked"
-                                CommandParameter="{Binding}" />
+                                FontAttributes="Bold"
+                                CommandParameter="{Binding}"
+                                Clicked="SelectSong_Clicked"/>
 
                         </Grid>
 
@@ -81,6 +136,7 @@
         </CollectionView>
 
         <Button
+            x:Name="SaveButton"
             Grid.Row="3"
             HeightRequest="50"
             CornerRadius="10"

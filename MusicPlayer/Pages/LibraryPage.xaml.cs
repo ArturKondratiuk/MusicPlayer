@@ -56,7 +56,16 @@ public partial class LibraryPage : ContentPage
         foreach (var song in allSongs)
             viewModel.AddSong(song);
 
-        audioService.SetPlaylist(allSongs); 
+        audioService.SetPlaylist(allSongs);
+
+        if (allSongs.Count == 0)
+        {
+            ShowLibraryEmptyState();
+        }
+        else
+        {
+            HideEmptyState();
+        }
 
         SongsCollection.Opacity = 0;
         SongsCollection.TranslationY = 20;
@@ -89,6 +98,15 @@ public partial class LibraryPage : ContentPage
         foreach (var song in filtered)
             viewModel.AddSong(song);
 
+        if (!filtered.Any())
+        {
+            ShowSearchEmptyState();
+        }
+        else
+        {
+            HideEmptyState();
+        }
+
         audioService.SetPlaylist(viewModel.Songs.ToList());
     }
 
@@ -104,16 +122,24 @@ public partial class LibraryPage : ContentPage
 
         bool added = false;
 
+        int addedCount = 0;
+        int skippedCount = 0;
+
         foreach (var file in files)
         {
             if (allSongs.Any(s => s.FilePath == file.FullPath))
+            {
+                skippedCount++;
                 continue;
+            }
 
             try
             {
                 var song = id3Service.ReadSong(file.FullPath);  
 
                 allSongs.Add(song);
+
+                addedCount++;
 
                 added = true;
             }
@@ -128,6 +154,11 @@ public partial class LibraryPage : ContentPage
         await libraryService.SaveLibraryAsync(allSongs);
 
         await LoadLibraryAsync();
+
+        await DisplayAlert(
+            "Import complete",
+            $"{addedCount} song(s) imported\n{skippedCount} skipped",
+            "OK");
 
         AddMusicButton.BackgroundColor = Colors.Green;
 
@@ -222,5 +253,61 @@ public partial class LibraryPage : ContentPage
         await settingsService.SaveAsync(settings);
 
         await LoadLibraryAsync();
+    }
+
+    private void ShowLibraryEmptyState()
+    {
+        SongsCollection.IsVisible = false;
+
+        EmptyState.IsVisible = true;
+
+        TopBar.IsVisible = false;
+        SearchBar.IsVisible = false;
+
+        EmptyTitle.Text = "Welcome!";
+
+        EmptyMessage.Text =
+            "Your music library is empty.\nImport songs or scan a folder to get started.";
+
+        EmptyButton.Text = "Import Music";
+    }
+
+    private void ShowSearchEmptyState()
+    {
+        SongsCollection.IsVisible = false;
+
+        EmptyState.IsVisible = true;
+
+        TopBar.IsVisible = true;
+        SearchBar.IsVisible = true;
+
+        EmptyTitle.Text = "No songs found";
+
+        EmptyMessage.Text = "Try another search.";
+
+        EmptyButton.Text = "Clear Search";
+    }
+
+    private void HideEmptyState()
+    {
+        SongsCollection.IsVisible = true;
+
+        EmptyState.IsVisible = false;
+
+        TopBar.IsVisible = true;
+        SearchBar.IsVisible = true;
+    }
+
+    private async void EmptyButton_Clicked(object sender, EventArgs e)
+    {
+        if (SearchBar.Text?.Length > 0)
+        {
+            SearchBar.Text = "";
+            return;
+        }
+
+        await Task.Yield();
+
+        AddMusicButton_Clicked(sender, e);
     }
 }

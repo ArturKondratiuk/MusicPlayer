@@ -24,14 +24,41 @@ public partial class AddSongsPage : ContentPage
     {
         base.OnAppearing();
 
-        library = await libraryService.LoadLibraryAsync();
+        var allSongs = await libraryService.LoadLibraryAsync();
 
-        library = library
-            .Where(song =>
-                !playlist.Songs.Any(p => p.FilePath == song.FilePath))
+        if (allSongs.Count == 0)
+        {
+            SearchBar.IsVisible = false;
+            SaveButton.IsVisible = false;
+            SongsCollection.IsVisible = false;
+
+            EmptyState.IsVisible = false;
+            LibraryEmptyState.IsVisible = true;
+
+            return;
+        }
+
+        SearchBar.IsVisible = true;
+        SaveButton.IsVisible = true;
+        LibraryEmptyState.IsVisible = false;
+
+        library = allSongs
+            .Where(song => !playlist.Songs.Any(p => p.FilePath == song.FilePath))
             .ToList();
 
-        LibraryView.ItemsSource = library;
+        SongsCollection.ItemsSource = library;
+
+        if (library.Count == 0)
+        {
+            ShowEmptyState(
+                "✅",
+                "All songs added",
+                "Every song from your library is already in this playlist.");
+        }
+        else
+        {
+            HideEmptyState();
+        }
 
         Content.Opacity = 0;
         Content.TranslationY = 20;
@@ -45,28 +72,35 @@ public partial class AddSongsPage : ContentPage
     {
         string text = e.NewTextValue?.Trim().ToLower() ?? "";
 
+        IEnumerable<Song> filtered;
+
         if (string.IsNullOrWhiteSpace(text))
         {
-            LibraryView.ItemsSource = library;
-            return;
+            filtered = library;
         }
-
-        LibraryView.ItemsSource = library.Where(song =>
-            (song.Title?.ToLower().Contains(text) ?? false) ||
-            (song.Artist?.ToLower().Contains(text) ?? false) ||
-            (song.Album?.ToLower().Contains(text) ?? false))
-            .ToList();
-    }
-
-    private async void Save_Clicked(object sender, EventArgs e)
-    {
-        foreach (var song in selectedSongs)
+        else
         {
-            if (!playlist.Songs.Any(s => s.FilePath == song.FilePath))
-                playlist.Songs.Add(song);
+            filtered = library.Where(song =>
+                (song.Title?.ToLower().Contains(text) ?? false) ||
+                (song.Artist?.ToLower().Contains(text) ?? false) ||
+                (song.Album?.ToLower().Contains(text) ?? false));
         }
 
-        await Navigation.PopAsync();
+        var result = filtered.ToList();
+
+        SongsCollection.ItemsSource = result;
+
+        if (result.Count == 0)
+        {
+            ShowEmptyState(
+                "🔍",
+                "No songs found",
+                "Try another search.");
+        }
+        else
+        {
+            HideEmptyState();
+        }
     }
 
     private void SelectSong_Clicked(object sender, EventArgs e)
@@ -82,7 +116,7 @@ public partial class AddSongsPage : ContentPage
             selectedSongs.Remove(song);
 
             button.Text = "+";
-            button.BackgroundColor = Colors.LightGray;
+            button.BackgroundColor = Color.FromArgb("#EEEEEE");
             button.TextColor = Colors.Black;
         }
         else
@@ -93,5 +127,41 @@ public partial class AddSongsPage : ContentPage
             button.BackgroundColor = Colors.Orange;
             button.TextColor = Colors.White;
         }
+    }
+
+    private async void Save_Clicked(object sender, EventArgs e)
+    {
+        foreach (Song song in selectedSongs)
+        {
+            if (!playlist.Songs.Any(s => s.FilePath == song.FilePath))
+            {
+                playlist.Songs.Add(song);
+            }
+        }
+
+        await Navigation.PopAsync();
+    }
+
+    private void ShowEmptyState(
+    string icon,
+    string title,
+    string message)
+    {
+        LibraryEmptyState.IsVisible = false;
+        EmptyState.IsVisible = true;
+
+        SongsCollection.IsVisible = false;
+
+        EmptyIcon.Text = icon;
+        EmptyTitle.Text = title;
+        EmptyMessage.Text = message;
+    }
+
+    private void HideEmptyState()
+    {
+        EmptyState.IsVisible = false;
+        LibraryEmptyState.IsVisible = false;
+
+        SongsCollection.IsVisible = true;
     }
 }

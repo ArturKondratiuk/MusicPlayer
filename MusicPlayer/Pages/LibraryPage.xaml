@@ -8,10 +8,11 @@
 
     <Grid
         Padding="20"
-        RowDefinitions="Auto,Auto,*"
+        RowDefinitions="Auto,Auto,*,Auto"
         RowSpacing="15">
 
         <Grid
+            x:Name="TopBar"
             Grid.Row="0"
             ColumnDefinitions="*,Auto,Auto">
 
@@ -44,6 +45,43 @@
             x:Name="SearchBar"
             Placeholder="Search songs..."
             TextChanged="SearchBar_TextChanged"/>
+
+        <VerticalStackLayout
+            x:Name="EmptyState"
+            Grid.Row="2"
+            IsVisible="False"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Padding="20"
+            Spacing="12">
+
+            <Label
+                FontSize="72"
+                HorizontalTextAlignment="Center"
+                Text="🎵"/>
+
+            <Label
+                x:Name="EmptyTitle"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                x:Name="EmptyMessage"
+                FontSize="16"
+                HorizontalTextAlignment="Center"
+                Opacity="0.7"/>
+
+            <Button
+                x:Name="EmptyButton"
+                WidthRequest="180"
+                HeightRequest="45"
+                CornerRadius="10"
+                BackgroundColor="Orange"
+                TextColor="White"
+                Clicked="EmptyButton_Clicked"/>
+
+        </VerticalStackLayout>
 
         <CollectionView
             x:Name="SongsCollection"

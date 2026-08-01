@@ -31,6 +31,8 @@ public class AudioService
 
     public double Duration => player?.Duration ?? 0;
 
+    private double volume = 1.0;
+
     public AudioService()
     {
         timer = Application.Current!.Dispatcher.CreateTimer();
@@ -72,7 +74,7 @@ public class AudioService
 
         player = AudioManager.Current.CreatePlayer(currentStream);
 
-        player.Volume = 1.0;
+        player.Volume = volume;
 
         player.Play();
 
@@ -148,19 +150,17 @@ public class AudioService
         }
     }
 
-    public void SetVolume(double volume)
+    public void SetVolume(double value)
     {
-        if (player == null)
-            return;
+        volume = value;
 
-        player.Pause();
-        player.Volume = volume;
-        player.Play();
+        if (player != null)
+            player.Volume = value;
     }
 
     public double GetVolume()
     {
-        return 1.0;
+        return volume;
     }
 
     public async Task Next()

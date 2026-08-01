@@ -12,6 +12,7 @@
         RowSpacing="15">
 
         <Grid
+            x:Name="TopBar"
             Grid.Row="0"
             ColumnDefinitions="*,Auto,Auto">
 
@@ -22,6 +23,7 @@
                 VerticalOptions="Center"/>
 
             <Button
+                x:Name="AddButton"
                 Grid.Column="1"
                 Margin="0,0,10,0"
                 Text="Add"
@@ -31,6 +33,7 @@
                 Clicked="AddSongs_Clicked"/>
 
             <Button
+                x:Name="PlayButton"
                 Grid.Column="2"
                 Text="Play"
                 CornerRadius="10"
@@ -39,14 +42,51 @@
         </Grid>
 
         <Label
+            x:Name="SongsLabel"
             Grid.Row="1"
             Text="Songs"
             FontSize="18"
             FontAttributes="Bold"/>
 
-        <CollectionView
+        <VerticalStackLayout
+            x:Name="EmptyState"
             Grid.Row="2"
+            IsVisible="False"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            Spacing="12">
+
+            <Label
+                Text="🎶"
+                FontSize="70"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                Text="Playlist is empty"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                Text="Add songs to start listening."
+                FontSize="16"
+                Opacity="0.7"
+                HorizontalTextAlignment="Center"/>
+
+            <Button
+                WidthRequest="170"
+                HeightRequest="45"
+                CornerRadius="10"
+                BackgroundColor="Orange"
+                TextColor="White"
+                Text="Add Songs"
+                Clicked="AddSongs_Clicked"/>
+
+        </VerticalStackLayout>
+
+        <CollectionView
             x:Name="SongsCollectionView"
+            Grid.Row="2"
             SelectionMode="Single"
             SelectionChanged="SongsCollectionView_SelectionChanged">
 

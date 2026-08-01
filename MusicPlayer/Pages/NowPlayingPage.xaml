@@ -6,150 +6,204 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Now Playing">
 
-    <ScrollView>
+    <Grid>
 
         <VerticalStackLayout
+            x:Name="EmptyState"
             Padding="25"
-            Spacing="20">
-
-            <Border
-                HorizontalOptions="Center"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 20">
-
-                <Image
-                    x:Name="AlbumImage"
-                    WidthRequest="280"
-                    HeightRequest="280"
-                    Aspect="AspectFill"/>
-
-            </Border>
+            Spacing="12"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            IsVisible="False">
 
             <Label
-                Text="{Binding Title}"
-                FontSize="32"
+                Text="🎵"
+                FontSize="80"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                Text="Nothing is playing"
+                FontSize="26"
                 FontAttributes="Bold"
-                HorizontalTextAlignment="Center"
-                LineBreakMode="TailTruncation"/>
+                HorizontalTextAlignment="Center"/>
 
             <Label
-                Text="{Binding Artist}"
-                FontSize="20"
-                HorizontalTextAlignment="Center"
-                Opacity="0.9"/>
-
-            <Label
-                Text="{Binding Album}"
-                FontSize="15"
-                HorizontalTextAlignment="Center"
-                Opacity="0.6"/>
-
-            <Slider
-                x:Name="ProgressSlider"
-                Minimum="0"
-                DragStarted="ProgressSlider_DragStarted"
-                DragCompleted="ProgressSlider_DragCompleted"/>
-
-            <Grid ColumnDefinitions="Auto,*">
-
-                <Label
-                    x:Name="CurrentTimeLabel"/>
-
-                <Label
-                    x:Name="DurationLabel"
-                    Grid.Column="1"
-                    HorizontalOptions="End"/>
-
-            </Grid>
-
-            <!-- Playback buttons -->
-
-            <HorizontalStackLayout
-                HorizontalOptions="Center"
-                Spacing="25">
-
-                <Button
-                    WidthRequest="65"
-                    HeightRequest="65"
-                    CornerRadius="32"
-                    FontSize="24"
-                    Text="⏮"
-                    Clicked="Previous_Clicked"/>
-
-                <Button
-                    x:Name="PlayPauseButton"
-                    WidthRequest="75"
-                    HeightRequest="75"
-                    CornerRadius="38"
-                    FontSize="28"
-                    Text="▶"
-                    Clicked="PlayPause_Clicked"/>
-
-                <Button
-                    WidthRequest="65"
-                    HeightRequest="65"
-                    CornerRadius="32"
-                    FontSize="24"
-                    Text="⏭"
-                    Clicked="Next_Clicked"/>
-
-            </HorizontalStackLayout>
-
-            <!-- Shuffle / Stop / Repeat -->
-
-            <HorizontalStackLayout
-                HorizontalOptions="Center"
-                Spacing="15">
-
-                <Button
-                    x:Name="ShuffleButton"
-                    WidthRequest="90"
-                    Text="🔀"
-                    Clicked="Shuffle_Clicked"/>
-
-                <Button
-                    WidthRequest="90"
-                    Text="⏹"
-                    Clicked="Stop_Clicked"/>
-
-                <Button
-                    x:Name="RepeatButton"
-                    WidthRequest="90"
-                    Text="🔁"
-                    Clicked="Repeat_Clicked"/>
-
-            </HorizontalStackLayout>
-
-            <Grid
-                Margin="0,15,0,0"
-                WidthRequest="260"
-                HorizontalOptions="Center"
-                ColumnDefinitions="Auto,*,Auto"
-                ColumnSpacing="10">
-
-                <Label
-                    Text="🔉"
-                    FontSize="18"
-                    VerticalOptions="Center"/>
-
-                <Slider
-                    x:Name="VolumeSlider"
-                    Grid.Column="1"
-                    Minimum="0"
-                    Maximum="1"
-                    ValueChanged="VolumeSlider_ValueChanged"
-                    VerticalOptions="Center"/>
-
-                <Label
-                    Grid.Column="2"
-                    Text="🔊"
-                    FontSize="18"
-                    VerticalOptions="Center"/>
-
-            </Grid>
+                Text="Choose a song from your library or a playlist."
+                FontSize="16"
+                Opacity="0.7"
+                HorizontalTextAlignment="Center"/>
 
         </VerticalStackLayout>
 
-    </ScrollView>
+        <ScrollView
+            x:Name="PlayerContent">
+
+            <VerticalStackLayout
+                Padding="25"
+                Spacing="20">
+
+                <Grid
+                    WidthRequest="280"
+                    HeightRequest="280"
+                    HorizontalOptions="Center">
+
+                    <Border
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 20">
+
+                        <Image
+                            x:Name="AlbumImage"
+                            WidthRequest="280"
+                            HeightRequest="280"
+                            Aspect="AspectFill"/>
+
+                    </Border>
+
+                    <Border
+                        x:Name="NoCoverBorder"
+                        IsVisible="False"
+                        StrokeThickness="0"
+                        BackgroundColor="#EAEAEA"
+                        StrokeShape="RoundRectangle 20">
+
+                        <VerticalStackLayout
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center">
+
+                            <Label
+                                Text="🎵"
+                                FontSize="120"
+                                HorizontalTextAlignment="Center"/>
+
+                        </VerticalStackLayout>
+
+                    </Border>
+
+                </Grid>
+
+                <Label
+                    Text="{Binding Title}"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="TailTruncation"/>
+
+                <Label
+                    Text="{Binding Artist}"
+                    FontSize="20"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.9"/>
+
+                <Label
+                    Text="{Binding Album}"
+                    FontSize="15"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.6"/>
+
+                <Slider
+                    x:Name="ProgressSlider"
+                    Minimum="0"
+                    DragStarted="ProgressSlider_DragStarted"
+                    DragCompleted="ProgressSlider_DragCompleted"/>
+
+                <Grid ColumnDefinitions="Auto,*">
+
+                    <Label
+                        x:Name="CurrentTimeLabel"/>
+
+                    <Label
+                        x:Name="DurationLabel"
+                        Grid.Column="1"
+                        HorizontalOptions="End"/>
+
+                </Grid>
+
+                <HorizontalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="25">
+
+                    <Button
+                        WidthRequest="65"
+                        HeightRequest="65"
+                        CornerRadius="32"
+                        FontSize="24"
+                        Text="⏮"
+                        Clicked="Previous_Clicked"/>
+
+                    <Button
+                        x:Name="PlayPauseButton"
+                        WidthRequest="75"
+                        HeightRequest="75"
+                        CornerRadius="38"
+                        FontSize="28"
+                        Text="▶"
+                        Clicked="PlayPause_Clicked"/>
+
+                    <Button
+                        WidthRequest="65"
+                        HeightRequest="65"
+                        CornerRadius="32"
+                        FontSize="24"
+                        Text="⏭"
+                        Clicked="Next_Clicked"/>
+
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="15">
+
+                    <Button
+                        x:Name="ShuffleButton"
+                        WidthRequest="90"
+                        Text="🔀"
+                        Clicked="Shuffle_Clicked"/>
+
+                    <Button
+                        WidthRequest="90"
+                        Text="⏹"
+                        Clicked="Stop_Clicked"/>
+
+                    <Button
+                        x:Name="RepeatButton"
+                        WidthRequest="90"
+                        Text="🔁"
+                        Clicked="Repeat_Clicked"/>
+
+                </HorizontalStackLayout>
+
+                <Grid
+                    Margin="0,15,0,0"
+                    WidthRequest="260"
+                    HorizontalOptions="Center"
+                    ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="10">
+
+                    <Label
+                        Text="🔉"
+                        FontSize="18"
+                        VerticalOptions="Center"/>
+
+                    <Slider
+                        x:Name="VolumeSlider"
+                        Grid.Column="1"
+                        Minimum="0"
+                        Maximum="1"
+                        ValueChanged="VolumeSlider_ValueChanged"
+                        VerticalOptions="Center"/>
+
+                    <Label
+                        Grid.Column="2"
+                        Text="🔊"
+                        FontSize="18"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Grid>
 
 </ContentPage>

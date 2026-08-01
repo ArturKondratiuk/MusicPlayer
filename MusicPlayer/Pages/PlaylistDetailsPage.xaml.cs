@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using MusicPlayer.Models;
 using MusicPlayer.Services;
-using System.Linq;
 
 namespace MusicPlayer.Pages;
 
@@ -26,15 +25,16 @@ public partial class PlaylistDetailsPage : ContentPage
 
         SongsCollectionView.ItemsSource = playlist.Songs;
 
-        SongsCollectionView.Opacity = 0;
-        SongsCollectionView.TranslationY = 20;
+        UpdateEmptyState();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        SongsCollectionView.ItemsSource = playlist.Songs;
+        PlaylistNameLabel.Text = playlist.Name;
+
+        UpdateEmptyState();
 
         Content.Opacity = 0;
         Content.TranslationY = 20;
@@ -46,15 +46,13 @@ public partial class PlaylistDetailsPage : ContentPage
 
     private async void AddSongs_Clicked(object sender, EventArgs e)
     {
-        var page = new AddSongsPage(playlist);
+        await Navigation.PushAsync(new AddSongsPage(playlist));
 
-        await Navigation.PushAsync(page);
+        // Вернулись назад после добавления
 
-        SongsCollectionView.ItemsSource = null;
-        SongsCollectionView.ItemsSource = playlist.Songs;
+        UpdateEmptyState();
 
-        await new PlaylistService().SaveAsync(
-            await LoadPlaylistsAndReplaceCurrent());
+        await SavePlaylist();
     }
 
     private async void DeleteSong_Clicked(object sender, EventArgs e)
@@ -67,11 +65,9 @@ public partial class PlaylistDetailsPage : ContentPage
 
         playlist.Songs.Remove(song);
 
-        SongsCollectionView.ItemsSource = null;
-        SongsCollectionView.ItemsSource = playlist.Songs;
+        UpdateEmptyState();
 
-        await new PlaylistService().SaveAsync(
-            await LoadPlaylistsAndReplaceCurrent());
+        await SavePlaylist();
     }
 
     private async void SongsCollectionView_SelectionChanged(
@@ -85,24 +81,10 @@ public partial class PlaylistDetailsPage : ContentPage
 
         await audioService.Play(song);
 
+        SongsCollectionView.SelectedItem = null;
+
         await Navigation.PushAsync(
             serviceProvider.GetRequiredService<NowPlayingPage>());
-
-        SongsCollectionView.SelectedItem = null;
-    }
-
-    private async Task<List<Playlist>> LoadPlaylistsAndReplaceCurrent()
-    {
-        var service = new PlaylistService();
-
-        var playlists = await service.LoadAsync();
-
-        int index = playlists.FindIndex(p => p.Name == playlist.Name);
-
-        if (index != -1)
-            playlists[index] = playlist;
-
-        return playlists;
     }
 
     private async void PlayPlaylist_Clicked(object sender, EventArgs e)
@@ -123,5 +105,34 @@ public partial class PlaylistDetailsPage : ContentPage
 
         await Navigation.PushAsync(
             serviceProvider.GetRequiredService<NowPlayingPage>());
+    }
+
+    private async Task SavePlaylist()
+    {
+        var service = new PlaylistService();
+
+        var playlists = await service.LoadAsync();
+
+        int index = playlists.FindIndex(p => p.Name == playlist.Name);
+
+        if (index != -1)
+            playlists[index] = playlist;
+
+        await service.SaveAsync(playlists);
+    }
+
+    private void UpdateEmptyState()
+    {
+        bool empty = playlist.Songs.Count == 0;
+
+        EmptyState.IsVisible = empty;
+
+        SongsCollectionView.IsVisible = !empty;
+
+        SongsLabel.IsVisible = !empty;
+
+        AddButton.IsVisible = !empty;
+
+        PlayButton.IsVisible = !empty;
     }
 }

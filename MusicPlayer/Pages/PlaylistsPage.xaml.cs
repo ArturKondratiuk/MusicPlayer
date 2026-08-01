@@ -50,6 +50,8 @@ public partial class PlaylistsPage : ContentPage
         foreach (var playlist in playlists)
             viewModel.AddPlaylist(playlist);
 
+        UpdateEmptyState();
+
         PlaylistsCollection.Opacity = 0;
         PlaylistsCollection.TranslationY = 20;
 
@@ -78,6 +80,8 @@ public partial class PlaylistsPage : ContentPage
         });
 
         await SaveAsync();
+
+        UpdateEmptyState();
     }
 
     private async void DeletePlaylist_Clicked(object sender, EventArgs e)
@@ -100,6 +104,8 @@ public partial class PlaylistsPage : ContentPage
         viewModel.RemovePlaylist(playlist);
 
         await SaveAsync();
+
+        UpdateEmptyState();
     }
 
     private async void OpenPlaylist_Clicked(object sender, EventArgs e)
@@ -138,5 +144,16 @@ public partial class PlaylistsPage : ContentPage
         await SaveAsync();
 
         await LoadAsync();
+    }
+
+    private void UpdateEmptyState()
+    {
+        bool empty = viewModel.Playlists.Count == 0;
+
+        EmptyState.IsVisible = empty;
+
+        PlaylistsCollection.IsVisible = !empty;
+
+        TopBar.IsVisible = !empty;
     }
 }

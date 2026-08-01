@@ -29,6 +29,7 @@ public partial class NowPlayingPage : ContentPage
 
         UpdateSong();
         UpdatePlayer();
+        UpdateEmptyState();
         UpdateButtons();
 
         var settings = await settingsService.LoadAsync();
@@ -59,25 +60,45 @@ public partial class NowPlayingPage : ContentPage
         audioService.SongChanged -= UpdateSong;
     }
 
+    private void UpdateEmptyState()
+    {
+        bool hasSong = audioService.CurrentSong != null;
+
+        EmptyState.IsVisible = !hasSong;
+        PlayerContent.IsVisible = hasSong;
+    }
+
     private void UpdateSong()
     {
         MainThread.BeginInvokeOnMainThread(() =>
         {
+            UpdateEmptyState();
+
             var song = audioService.CurrentSong;
 
             if (song == null)
+            {
+                Title = "Now Playing";
+                BindingContext = null;
                 return;
+            }
 
             BindingContext = song;
 
             if (!string.IsNullOrWhiteSpace(song.AlbumArt))
             {
+                AlbumImage.IsVisible = true;
+                NoCoverBorder.IsVisible = false;
+
                 AlbumImage.Source =
                     ImageSource.FromUri(new Uri(song.AlbumArt));
             }
             else
             {
                 AlbumImage.Source = null;
+
+                AlbumImage.IsVisible = false;
+                NoCoverBorder.IsVisible = true;
             }
 
             Title = $"Now Playing - {song.Title}";
@@ -88,6 +109,8 @@ public partial class NowPlayingPage : ContentPage
     {
         MainThread.BeginInvokeOnMainThread(() =>
         {
+            UpdateEmptyState();
+
             if (audioService.CurrentSong == null)
                 return;
 
@@ -178,11 +201,13 @@ public partial class NowPlayingPage : ContentPage
         await audioService.Next();
     }
 
-    private async void Stop_Clicked(object sender, EventArgs e)
+    private void Stop_Clicked(object sender, EventArgs e)
     {
         audioService.Stop();
 
-        await Navigation.PopAsync();
+        UpdateSong();
+        UpdatePlayer();
+        UpdateEmptyState();
     }
 
     private async void Shuffle_Clicked(object sender, EventArgs e)
