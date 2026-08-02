@@ -1,4 +1,5 @@
 ﻿using MusicPlayer.Services;
+using System.Net.Http;
 
 namespace MusicPlayer.Pages;
 
@@ -68,42 +69,57 @@ public partial class NowPlayingPage : ContentPage
         PlayerContent.IsVisible = hasSong;
     }
 
-    private void UpdateSong()
+    private async void UpdateSong()
+{
+    await MainThread.InvokeOnMainThreadAsync(async () =>
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        UpdateEmptyState();
+
+        var song = audioService.CurrentSong;
+
+        if (song == null)
         {
-            UpdateEmptyState();
+            Title = "Now Playing";
+            BindingContext = null;
+            AlbumImage.Source = null;
+            return;
+        }
 
-            var song = audioService.CurrentSong;
+        BindingContext = song;
 
-            if (song == null)
+        if (!string.IsNullOrWhiteSpace(song.AlbumArt))
+        {
+            AlbumImage.IsVisible = true;
+            NoCoverBorder.IsVisible = false;
+
+            try
             {
-                Title = "Now Playing";
-                BindingContext = null;
-                return;
+                using var http = new HttpClient();
+
+                var bytes = await http.GetByteArrayAsync(song.AlbumArt);
+
+                AlbumImage.Source = ImageSource.FromStream(() =>
+                    new MemoryStream(bytes));
             }
-
-            BindingContext = song;
-
-            if (!string.IsNullOrWhiteSpace(song.AlbumArt))
-            {
-                AlbumImage.IsVisible = true;
-                NoCoverBorder.IsVisible = false;
-
-                AlbumImage.Source =
-                    ImageSource.FromUri(new Uri(song.AlbumArt));
-            }
-            else
+            catch
             {
                 AlbumImage.Source = null;
 
                 AlbumImage.IsVisible = false;
                 NoCoverBorder.IsVisible = true;
             }
+        }
+        else
+        {
+            AlbumImage.Source = null;
 
-            Title = $"Now Playing - {song.Title}";
-        });
-    }
+            AlbumImage.IsVisible = false;
+            NoCoverBorder.IsVisible = true;
+        }
+
+        Title = $"Now Playing - {song.Title}";
+    });
+}
 
     private void UpdatePlayer()
     {

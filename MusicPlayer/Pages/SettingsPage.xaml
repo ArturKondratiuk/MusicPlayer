@@ -169,8 +169,6 @@
 
             </Border>
 
-            <!-- Repeat -->
-
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -201,9 +199,7 @@
                 </Grid>
 
             </Border>
-
-            <!-- About -->
-
+            
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -228,6 +224,9 @@
 
                     <Label
                         Text="ID3.NET"/>
+
+                    <Label
+                        Text="by Artur Kondratiuk"/>
 
                 </VerticalStackLayout>
 

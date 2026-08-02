@@ -140,7 +140,10 @@ public class AlbumArtService
             if (images.GetArrayLength() == 0)
                 return null;
 
-            return images[0]
+            var first = images[0];
+
+
+            return first
                 .GetProperty("image")
                 .GetString();
         }
