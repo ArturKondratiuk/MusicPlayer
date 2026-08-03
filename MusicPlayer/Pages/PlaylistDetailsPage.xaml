@@ -1,135 +1,136 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
-    x:Class="MusicPlayer.Pages.PlaylistDetailsPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Playlist">
+        xmlns:models="clr-namespace:MusicPlayer.Models"
+        x:Class="MusicPlayer.Pages.PlaylistDetailsPage"
+        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        Title="Playlist">
 
     <Grid
-        Padding="20"
-        RowDefinitions="Auto,Auto,*"
-        RowSpacing="15">
+            Padding="20"
+            RowDefinitions="Auto,Auto,*"
+            RowSpacing="15">
 
         <Grid
-            x:Name="TopBar"
-            Grid.Row="0"
-            ColumnDefinitions="*,Auto,Auto">
+                x:Name="TopBar"
+                Grid.Row="0"
+                ColumnDefinitions="*,Auto,Auto">
 
             <Label
-                x:Name="PlaylistNameLabel"
-                FontSize="30"
-                FontAttributes="Bold"
-                VerticalOptions="Center"/>
+                    x:Name="PlaylistNameLabel"
+                    FontSize="30"
+                    FontAttributes="Bold"
+                    VerticalOptions="Center"/>
 
             <Button
-                x:Name="AddButton"
-                Grid.Column="1"
-                Margin="0,0,10,0"
-                Text="Add"
-                BackgroundColor="Orange"
-                TextColor="White"
-                CornerRadius="10"
-                Clicked="AddSongs_Clicked"/>
+                    x:Name="AddButton"
+                    Grid.Column="1"
+                    Margin="0,0,10,0"
+                    Text="Add"
+                    BackgroundColor="Orange"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Clicked="AddSongs_Clicked"/>
 
             <Button
-                x:Name="PlayButton"
-                Grid.Column="2"
-                Text="Play"
-                CornerRadius="10"
-                Clicked="PlayPlaylist_Clicked"/>
+                    x:Name="PlayButton"
+                    Grid.Column="2"
+                    Text="Play"
+                    CornerRadius="10"
+                    Clicked="PlayPlaylist_Clicked"/>
 
         </Grid>
 
         <Label
-            x:Name="SongsLabel"
-            Grid.Row="1"
-            Text="Songs"
-            FontSize="18"
-            FontAttributes="Bold"/>
+                x:Name="SongsLabel"
+                Grid.Row="1"
+                Text="Songs"
+                FontSize="18"
+                FontAttributes="Bold"/>
 
         <VerticalStackLayout
-            x:Name="EmptyState"
-            Grid.Row="2"
-            IsVisible="False"
-            VerticalOptions="Center"
-            HorizontalOptions="Center"
-            Spacing="12">
+                x:Name="EmptyState"
+                Grid.Row="2"
+                IsVisible="False"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Spacing="12">
 
             <Label
-                Text="🎶"
-                FontSize="70"
-                HorizontalTextAlignment="Center"/>
+                    Text="🎶"
+                    FontSize="70"
+                    HorizontalTextAlignment="Center"/>
 
             <Label
-                Text="Playlist is empty"
-                FontSize="24"
-                FontAttributes="Bold"
-                HorizontalTextAlignment="Center"/>
+                    Text="Playlist is empty"
+                    FontSize="24"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"/>
 
             <Label
-                Text="Add songs to start listening."
-                FontSize="16"
-                Opacity="0.7"
-                HorizontalTextAlignment="Center"/>
+                    Text="Add songs to start listening."
+                    FontSize="16"
+                    Opacity="0.7"
+                    HorizontalTextAlignment="Center"/>
 
             <Button
-                WidthRequest="170"
-                HeightRequest="45"
-                CornerRadius="10"
-                BackgroundColor="Orange"
-                TextColor="White"
-                Text="Add Songs"
-                Clicked="AddSongs_Clicked"/>
+                    WidthRequest="170"
+                    HeightRequest="45"
+                    CornerRadius="10"
+                    BackgroundColor="Orange"
+                    TextColor="White"
+                    Text="Add Songs"
+                    Clicked="AddSongs_Clicked"/>
 
         </VerticalStackLayout>
 
         <CollectionView
-            x:Name="SongsCollectionView"
-            Grid.Row="2"
-            SelectionMode="Single"
-            SelectionChanged="SongsCollectionView_SelectionChanged">
+                x:Name="SongsCollectionView"
+                Grid.Row="2"
+                SelectionMode="Single"
+                SelectionChanged="SongsCollectionView_SelectionChanged">
 
             <CollectionView.ItemTemplate>
 
-                <DataTemplate>
+                <DataTemplate x:DataType="models:Song">
 
                     <Border
-                        Margin="0,0,0,12"
-                        Padding="12"
-                        Stroke="#DDDDDD"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 12">
+                            Margin="0,0,0,12"
+                            Padding="12"
+                            Stroke="#DDDDDD"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12">
 
                         <Grid ColumnDefinitions="*,Auto">
 
                             <VerticalStackLayout
-                                Spacing="3">
+                                    Spacing="3">
 
                                 <Label
-                                    Text="{Binding Title}"
-                                    FontSize="18"
-                                    FontAttributes="Bold"/>
+                                        Text="{Binding Title}"
+                                        FontSize="18"
+                                        FontAttributes="Bold"/>
 
                                 <Label
-                                    Text="{Binding Artist}"
-                                    FontSize="14"/>
+                                        Text="{Binding Artist}"
+                                        FontSize="14"/>
 
                                 <Label
-                                    Text="{Binding Album}"
-                                    FontSize="12"
-                                    Opacity="0.6"/>
+                                        Text="{Binding Album}"
+                                        FontSize="12"
+                                        Opacity="0.6"/>
 
                             </VerticalStackLayout>
 
                             <Button
-                                Grid.Column="1"
-                                WidthRequest="42"
-                                HeightRequest="42"
-                                CornerRadius="21"
-                                Text="🗑"
-                                CommandParameter="{Binding}"
-                                Clicked="DeleteSong_Clicked"/>
+                                    Grid.Column="1"
+                                    WidthRequest="42"
+                                    HeightRequest="42"
+                                    CornerRadius="21"
+                                    Text="🗑"
+                                    CommandParameter="{Binding}"
+                                    Clicked="DeleteSong_Clicked"/>
 
                         </Grid>
 

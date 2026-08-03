@@ -9,8 +9,11 @@ public partial class App : Application
         InitializeComponent();
 
         ApplySavedTheme();
+    }
 
-        MainPage = new AppShell();
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
     }
 
     private async void ApplySavedTheme()

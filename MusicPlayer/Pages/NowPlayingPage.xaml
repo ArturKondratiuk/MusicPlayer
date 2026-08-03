@@ -2,6 +2,8 @@
 
 <ContentPage
     x:Class="MusicPlayer.Pages.NowPlayingPage"
+    x:DataType="models:Song"
+    xmlns:models="clr-namespace:MusicPlayer.Models"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Now Playing">
