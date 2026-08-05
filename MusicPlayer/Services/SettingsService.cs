@@ -1,28 +1,24 @@
 ﻿using MusicPlayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicPlayer.Services;
 
-public class SettingsService
-{
+public class SettingsService {
+    //service for reading and writing json files
     private readonly JsonService jsonService = new();
 
-    private readonly string filePath =
-        Path.Combine(FileSystem.AppDataDirectory, "settings.json");
+    //path to settings file
+    private readonly string filePath = Path.Combine(FileSystem.AppDataDirectory, "settings.json");
 
-    public async Task<Settings> LoadAsync()
-    {
+    //loads settings from file
+    public async Task<Settings> LoadAsync() {
         var settings = await jsonService.LoadAsync<Settings>(filePath);
 
+        //return default settings if file doesn't exist
         return settings ?? new Settings();
     }
 
-    public async Task SaveAsync(    Settings settings)
-    {
+    //saves settings to file
+    public async Task SaveAsync(Settings settings) {
         await jsonService.SaveAsync(filePath, settings);
     }
 }

@@ -1,26 +1,26 @@
-using Microsoft.Maui.Storage;
 using MusicPlayer.Models;
 using MusicPlayer.Services;
 using MusicPlayer.ViewModels;
 
 namespace MusicPlayer.Pages;
 
-public partial class LibraryPage : ContentPage
-{
+public partial class LibraryPage : ContentPage {
+    //viewModel for CollectionView
     private readonly LibraryViewModel viewModel = new();
+
+    //services
     private readonly LibraryService libraryService = new();
     private readonly Id3Service id3Service = new();
     private readonly SettingsService settingsService = new();
 
+    //all songs from library
     private List<Song> allSongs = new();
 
+    //shared services
     private readonly AudioService audioService;
     private readonly IServiceProvider serviceProvider;
 
-    public LibraryPage(
-        AudioService audioService,
-        IServiceProvider serviceProvider)
-    {
+    public LibraryPage(AudioService audioService, IServiceProvider serviceProvider) {
         InitializeComponent();
 
         this.audioService = audioService;
@@ -29,54 +29,54 @@ public partial class LibraryPage : ContentPage
         BindingContext = viewModel;
     }
 
-    protected override async void OnAppearing()
-    {
+    //load library every time page opens
+    protected override async void OnAppearing() {
         base.OnAppearing();
 
+        //small animation
         Content.Opacity = 0;
         Content.TranslationY = 20;
 
         await LoadLibraryAsync();
 
-        await Task.WhenAll(
-            Content.FadeTo(1, 220),
-            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
+        await Task.WhenAll(Content.FadeTo(1, 220), Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
-    private async Task LoadLibraryAsync()
-    {
+    //load songs from saved library
+    private async Task LoadLibraryAsync() {
         var settings = await settingsService.LoadAsync();
 
         allSongs = await libraryService.LoadLibraryAsync();
 
+        //sort songs using saved setting
         allSongs = SortSongs(allSongs, settings.DefaultSort);
 
+        //refresh ViewModel
         viewModel.Songs.Clear();
 
-        foreach (var song in allSongs)
+        foreach (var song in allSongs) {
             viewModel.AddSong(song);
+        }
 
+        //update playlist for player
         audioService.SetPlaylist(allSongs);
 
+        //show empty screen if library has no songs
         if (allSongs.Count == 0)
-        {
             ShowLibraryEmptyState();
-        }
-        else
-        {
-            HideEmptyState();
-        }
 
+        else
+            HideEmptyState();
+
+        //small animation
         SongsCollection.Opacity = 0;
         SongsCollection.TranslationY = 20;
 
-        await Task.WhenAll(
-            SongsCollection.FadeTo(1, 220),
-            SongsCollection.TranslateTo(0, 0, 220, Easing.CubicOut));
+        await Task.WhenAll(SongsCollection.FadeTo(1, 220), SongsCollection.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
-    private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
-    {
+    //search songs
+    private void SearchBar_TextChanged(object sender, TextChangedEventArgs e) {
         string text = e.NewTextValue?.Trim().ToLower() ?? "";
 
         viewModel.Songs.Clear();
@@ -84,34 +84,29 @@ public partial class LibraryPage : ContentPage
         IEnumerable<Song> filtered;
 
         if (string.IsNullOrWhiteSpace(text))
-        {
             filtered = allSongs;
-        }
-        else
-        {
+        
+        else 
             filtered = allSongs.Where(song =>
                 (song.Title?.ToLower().Contains(text) ?? false) ||
                 (song.Artist?.ToLower().Contains(text) ?? false) ||
                 (song.Album?.ToLower().Contains(text) ?? false));
-        }
 
         foreach (var song in filtered)
             viewModel.AddSong(song);
 
         if (!filtered.Any())
-        {
             ShowSearchEmptyState();
-        }
-        else
-        {
-            HideEmptyState();
-        }
 
+        else
+            HideEmptyState();
+
+        //player should use filtered list
         audioService.SetPlaylist(viewModel.Songs.ToList());
     }
 
-    private async void AddMusicButton_Clicked(object sender, EventArgs e)
-    {
+    //import music files
+    private async void AddMusicButton_Clicked(object sender, EventArgs e) {
         var files = await FilePicker.Default.PickMultipleAsync(new PickOptions
         {
             PickerTitle = "Select music files"
@@ -125,26 +120,24 @@ public partial class LibraryPage : ContentPage
         int addedCount = 0;
         int skippedCount = 0;
 
-        foreach (var file in files)
-        {
-            if (allSongs.Any(s => s.FilePath == file.FullPath))
-            {
+        foreach (var file in files) {
+            //skip duplicates
+            if (allSongs.Any(s => s.FilePath == file.FullPath)) {
                 skippedCount++;
                 continue;
             }
 
-            try
-            {
-                var song = id3Service.ReadSong(file.FullPath);  
+            try {
+                var song = id3Service.ReadSong(file.FullPath);
 
                 allSongs.Add(song);
 
                 addedCount++;
-
                 added = true;
             }
-            catch
-            {
+
+            catch {
+                //ignore broken files
             }
         }
 
@@ -160,6 +153,7 @@ public partial class LibraryPage : ContentPage
             $"{addedCount} song(s) imported\n{skippedCount} skipped",
             "OK");
 
+        //small success animation
         AddMusicButton.BackgroundColor = Colors.Green;
 
         await Task.Delay(500);
@@ -167,8 +161,8 @@ public partial class LibraryPage : ContentPage
         AddMusicButton.BackgroundColor = Colors.Orange;
     }
 
-    private async void PlaySong_Clicked(object sender, EventArgs e)
-    {
+    //play selected song
+    private async void PlaySong_Clicked(object sender, EventArgs e) {
         if (sender is not Button button)
             return;
 
@@ -181,8 +175,8 @@ public partial class LibraryPage : ContentPage
             serviceProvider.GetRequiredService<NowPlayingPage>());
     }
 
-    private async void DeleteSong_Clicked(object sender, EventArgs e)
-    {
+    //delete song from library
+    private async void DeleteSong_Clicked(object sender, EventArgs e) {
         if (sender is not Button button)
             return;
 
@@ -191,8 +185,8 @@ public partial class LibraryPage : ContentPage
 
         var settings = await settingsService.LoadAsync();
 
-        if (settings.ConfirmDelete)
-        {
+        //ask confirmation if enabled
+        if (settings.ConfirmDelete) {
             bool answer = await DisplayAlert(
                 "Delete Song",
                 $"Delete \"{song.Title}\"?",
@@ -203,6 +197,7 @@ public partial class LibraryPage : ContentPage
                 return;
         }
 
+        //stop player if this song is playing
         if (audioService.CurrentSong == song)
             audioService.Stop();
 
@@ -213,10 +208,9 @@ public partial class LibraryPage : ContentPage
         await LoadLibraryAsync();
     }
 
-    private List<Song> SortSongs(List<Song> songs, string sort)
-    {
-        return sort switch
-        {
+    //sort songs
+    private List<Song> SortSongs(List<Song> songs, string sort) {
+        return sort switch {
             "Artist" => songs
                 .OrderBy(s => s.Artist)
                 .ThenBy(s => s.Title)
@@ -233,8 +227,8 @@ public partial class LibraryPage : ContentPage
         };
     }
 
-    private async void SortButton_Clicked(object sender, EventArgs e)
-    {
+    //choose sorting
+    private async void SortButton_Clicked(object sender, EventArgs e) {
         string? result = await DisplayActionSheet(
             "Sort library",
             "Cancel",
@@ -255,10 +249,9 @@ public partial class LibraryPage : ContentPage
         await LoadLibraryAsync();
     }
 
-    private void ShowLibraryEmptyState()
-    {
+    //empty library screen
+    private void ShowLibraryEmptyState() {
         SongsCollection.IsVisible = false;
-
         EmptyState.IsVisible = true;
 
         TopBar.IsVisible = false;
@@ -272,40 +265,38 @@ public partial class LibraryPage : ContentPage
         EmptyButton.Text = "Import Music";
     }
 
-    private void ShowSearchEmptyState()
-    {
+    //empty search result screen
+    private void ShowSearchEmptyState() {
         SongsCollection.IsVisible = false;
-
         EmptyState.IsVisible = true;
 
         TopBar.IsVisible = true;
         SearchBar.IsVisible = true;
 
         EmptyTitle.Text = "No songs found";
-
         EmptyMessage.Text = "Try another search.";
 
         EmptyButton.Text = "Clear Search";
     }
 
-    private void HideEmptyState()
-    {
+    //return to normal view
+    private void HideEmptyState() {
         SongsCollection.IsVisible = true;
-
         EmptyState.IsVisible = false;
 
         TopBar.IsVisible = true;
         SearchBar.IsVisible = true;
     }
 
-    private async void EmptyButton_Clicked(object sender, EventArgs e)
-    {
-        if (SearchBar.Text?.Length > 0)
-        {
+    //button in empty state
+    private async void EmptyButton_Clicked(object sender, EventArgs e) {
+        //clear search if searching
+        if (SearchBar.Text?.Length > 0) {
             SearchBar.Text = "";
             return;
         }
 
+        //otherwise import music
         await Task.Yield();
 
         AddMusicButton_Clicked(sender, e);

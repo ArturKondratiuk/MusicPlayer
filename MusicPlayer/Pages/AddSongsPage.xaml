@@ -12,18 +12,21 @@
         RowDefinitions="Auto,Auto,*,Auto"
         RowSpacing="15">
 
+        <!-- page title -->
         <Label
             Grid.Row="0"
             Text="Add Songs"
             FontSize="30"
             FontAttributes="Bold"/>
 
+        <!-- search -->
         <SearchBar
             x:Name="SearchBar"
             Grid.Row="1"
             Placeholder="Search songs..."
             TextChanged="SearchBar_TextChanged"/>
 
+        <!-- empty search result -->
         <VerticalStackLayout
             x:Name="EmptyState"
             Grid.Row="2"
@@ -51,6 +54,7 @@
 
         </VerticalStackLayout>
 
+        <!-- empty library -->
         <VerticalStackLayout
             x:Name="LibraryEmptyState"
             Grid.Row="2"
@@ -78,6 +82,7 @@
 
         </VerticalStackLayout>
 
+        <!-- song list -->
         <CollectionView
             x:Name="SongsCollection"
             Grid.Row="2"
@@ -136,6 +141,7 @@
 
         </CollectionView>
 
+        <!-- save button -->
         <Button
             x:Name="SaveButton"
             Grid.Row="3"

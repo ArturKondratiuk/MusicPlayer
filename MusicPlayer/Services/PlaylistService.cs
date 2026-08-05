@@ -1,29 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MusicPlayer.Models;
+﻿using MusicPlayer.Models;
 
 namespace MusicPlayer.Services;
 
 public class PlaylistService
 {
+    //works with json files
     private readonly JsonService jsonService = new();
 
+    //file where playlists are stored
     private readonly string filePath =
         Path.Combine(FileSystem.AppDataDirectory, "playlists.json");
 
-    public async Task SaveAsync(List<Playlist> playlists)
-    {
+    //save all playlists
+    public async Task SaveAsync(List<Playlist> playlists) {
         await jsonService.SaveAsync(filePath, playlists);
     }
 
-    public async Task<List<Playlist>> LoadAsync()
-    {
+    //load playlists from file
+    public async Task<List<Playlist>> LoadAsync() {
         var playlists =
             await jsonService.LoadAsync<List<Playlist>>(filePath);
 
-        return playlists ?? new();
+        //return empty list if file doesn't exist
+        return playlists ?? new List<Playlist>();
     }
 }

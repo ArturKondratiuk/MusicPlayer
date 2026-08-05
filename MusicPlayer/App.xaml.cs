@@ -2,28 +2,26 @@
 
 namespace MusicPlayer;
 
-public partial class App : Application
-{
-    public App()
-    {
+public partial class App : Application {
+    public App() {
         InitializeComponent();
 
+        //apply saved theme on startup
         ApplySavedTheme();
     }
 
-    protected override Window CreateWindow(IActivationState? activationState)
-    {
+    protected override Window CreateWindow(IActivationState? activationState) {
+        //open the main application window
         return new Window(new AppShell());
     }
 
-    private async void ApplySavedTheme()
-    {
-        SettingsService settingsService = new();
+    //load saved theme from settings
+    private async void ApplySavedTheme() {
+        var settings = await new SettingsService().LoadAsync();
 
-        var settings = await settingsService.LoadAsync();
-
-        UserAppTheme = settings.DarkMode
-            ? AppTheme.Dark
-            : AppTheme.Light;
+        UserAppTheme =
+            settings.DarkMode
+                ? AppTheme.Dark
+                : AppTheme.Light;
     }
 }

@@ -10,6 +10,7 @@
 
     <Grid>
 
+        <!-- empty state -->
         <VerticalStackLayout
             x:Name="EmptyState"
             Padding="25"
@@ -37,13 +38,14 @@
 
         </VerticalStackLayout>
 
-        <ScrollView
-            x:Name="PlayerContent">
+        <!-- main player -->
+        <ScrollView x:Name="PlayerContent">
 
             <VerticalStackLayout
                 Padding="25"
                 Spacing="20">
 
+                <!-- album cover -->
                 <Grid
                     WidthRequest="280"
                     HeightRequest="280"
@@ -61,6 +63,7 @@
 
                     </Border>
 
+                    <!-- placeholder when cover is missing -->
                     <Border
                         x:Name="NoCoverBorder"
                         IsVisible="False"
@@ -83,6 +86,7 @@
 
                 </Grid>
 
+                <!-- song info -->
                 <Label
                     Text="{Binding Title}"
                     FontSize="32"
@@ -102,6 +106,7 @@
                     HorizontalTextAlignment="Center"
                     Opacity="0.6"/>
 
+                <!-- playback progress -->
                 <Slider
                     x:Name="ProgressSlider"
                     Minimum="0"
@@ -110,8 +115,7 @@
 
                 <Grid ColumnDefinitions="Auto,*">
 
-                    <Label
-                        x:Name="CurrentTimeLabel"/>
+                    <Label x:Name="CurrentTimeLabel"/>
 
                     <Label
                         x:Name="DurationLabel"
@@ -120,6 +124,7 @@
 
                 </Grid>
 
+                <!-- playback controls -->
                 <HorizontalStackLayout
                     HorizontalOptions="Center"
                     Spacing="25">
@@ -151,6 +156,7 @@
 
                 </HorizontalStackLayout>
 
+                <!-- extra controls -->
                 <HorizontalStackLayout
                     HorizontalOptions="Center"
                     Spacing="15">
@@ -174,6 +180,7 @@
 
                 </HorizontalStackLayout>
 
+                <!-- volume -->
                 <Grid
                     Margin="0,15,0,0"
                     WidthRequest="260"

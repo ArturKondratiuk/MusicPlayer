@@ -14,6 +14,7 @@
         RowDefinitions="Auto,Auto,*,Auto"
         RowSpacing="15">
 
+        <!-- header -->
         <Grid
             x:Name="TopBar"
             Grid.Row="0"
@@ -43,12 +44,14 @@
 
         </Grid>
 
+        <!-- search -->
         <SearchBar
             Grid.Row="1"
             x:Name="SearchBar"
             Placeholder="Search songs..."
             TextChanged="SearchBar_TextChanged"/>
 
+        <!-- empty state -->
         <VerticalStackLayout
             x:Name="EmptyState"
             Grid.Row="2"
@@ -86,6 +89,7 @@
 
         </VerticalStackLayout>
 
+        <!-- song list -->
         <CollectionView
             x:Name="SongsCollection"
             Grid.Row="2"
@@ -105,6 +109,7 @@
 
                         <Grid ColumnDefinitions="*,Auto">
 
+                            <!-- song information -->
                             <VerticalStackLayout Spacing="3">
 
                                 <Label
@@ -123,6 +128,7 @@
 
                             </VerticalStackLayout>
 
+                            <!-- song actions -->
                             <HorizontalStackLayout
                                 Grid.Column="1"
                                 Spacing="8"

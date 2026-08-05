@@ -2,11 +2,11 @@
 
 <ContentPage
     xmlns:viewModels="clr-namespace:MusicPlayer.ViewModels"
-    x:DataType="viewModels:PlaylistViewModel"
     xmlns:models="clr-namespace:MusicPlayer.Models"
     x:Class="MusicPlayer.Pages.PlaylistsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:DataType="viewModels:PlaylistViewModel"
     Title="Playlists">
 
     <Grid
@@ -14,6 +14,7 @@
         RowDefinitions="Auto,*"
         RowSpacing="15">
 
+        <!-- page header -->
         <Grid
             x:Name="TopBar"
             Grid.Row="0"
@@ -35,6 +36,7 @@
 
         </Grid>
 
+        <!-- empty state -->
         <VerticalStackLayout
             x:Name="EmptyState"
             Grid.Row="1"
@@ -71,6 +73,7 @@
 
         </VerticalStackLayout>
 
+        <!-- playlist list -->
         <CollectionView
             x:Name="PlaylistsCollection"
             Grid.Row="1"
@@ -79,6 +82,7 @@
 
             <CollectionView.ItemTemplate>
 
+                <!-- playlist card -->
                 <DataTemplate x:DataType="models:Playlist">
 
                     <Border
@@ -90,6 +94,7 @@
 
                         <Grid ColumnDefinitions="*,Auto">
 
+                            <!-- playlist info -->
                             <VerticalStackLayout
                                 Spacing="4">
 
@@ -105,6 +110,7 @@
 
                             </VerticalStackLayout>
 
+                            <!-- action buttons -->
                             <HorizontalStackLayout
                                 Grid.Column="1"
                                 VerticalOptions="Center"
@@ -115,24 +121,24 @@
                                     HeightRequest="42"
                                     CornerRadius="21"
                                     Text="📂"
-                                    Clicked="OpenPlaylist_Clicked"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Clicked="OpenPlaylist_Clicked"/>
 
                                 <Button
                                     WidthRequest="42"
                                     HeightRequest="42"
                                     CornerRadius="21"
                                     Text="✏️"
-                                    Clicked="RenamePlaylist_Clicked"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Clicked="RenamePlaylist_Clicked"/>
 
                                 <Button
                                     WidthRequest="42"
                                     HeightRequest="42"
                                     CornerRadius="21"
                                     Text="🗑"
-                                    Clicked="DeletePlaylist_Clicked"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Clicked="DeletePlaylist_Clicked"/>
 
                             </HorizontalStackLayout>
 

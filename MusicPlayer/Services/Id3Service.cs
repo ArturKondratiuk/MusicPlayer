@@ -1,54 +1,50 @@
 ﻿using Id3;
 using MusicPlayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicPlayer.Services;
-public class Id3Service
-{
-    public Song ReadSong(string filePath)
-    {
-        Song song = new Song
-        {
+
+public class Id3Service {
+    //read song information from mp3 file
+    public Song ReadSong(string filePath) {
+        //create song with default values
+        Song song = new Song {
             FilePath = filePath,
             Title = Path.GetFileNameWithoutExtension(filePath),
             Artist = "Unknown Artist",
             Album = "Unknown Album"
         };
 
-        try
-        {
+        try {
+            //open mp3 file
             var mp3 = new Mp3(filePath);
 
+            //read ID3v2 tag
             var tag = mp3.GetTag(Id3TagFamily.Version2X);
 
-            if (tag != null)
-            {
+            if (tag != null) {
+                //read title
                 if (!string.IsNullOrWhiteSpace(tag.Title))
                     song.Title = Clean(tag.Title);
 
+                //read album
                 if (!string.IsNullOrWhiteSpace(tag.Album))
                     song.Album = Clean(tag.Album);
 
+                //read artist
                 if (tag.Artists != null)
                     song.Artist = Clean(tag.Artists.ToString());
             }
         }
-        catch
-        {
 
+        catch {
+            //ignore invalid metadata
         }
 
         return song;
     }
 
-    private static string Clean(string? value)
-    {
-        return value?
-            .Replace("\0", "")
-            .Trim() ?? "";
+    //remove invalid characters (yes twice, they are working between files the need tho)
+    private static string Clean(string? value) {
+        return value?.Replace("\0", "").Trim() ?? "";
     }
 }

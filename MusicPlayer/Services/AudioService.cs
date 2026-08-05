@@ -3,28 +3,35 @@ using Plugin.Maui.Audio;
 
 namespace MusicPlayer.Services;
 
-public class AudioService
-{
+public class AudioService {
     private IAudioPlayer? player;
     private FileStream? currentStream;
 
+    //timer updates player UI
     private readonly IDispatcherTimer timer;
+
+    //services
     private readonly AlbumArtService albumArtService = new();
     private readonly LibraryService libraryService = new();
 
+    //events for UI
     public event Action? PlaybackUpdated;
     public event Action? SongChanged;
 
+    //current song
     public Song? CurrentSong { get; private set; }
 
+    //current playlist
     public List<Song> Playlist { get; private set; } = new();
 
     public int CurrentIndex { get; private set; } = -1;
 
+    //playback settings
     public bool Shuffle { get; set; }
 
     public int RepeatMode { get; set; }
 
+    //player state
     public bool IsPlaying => player?.IsPlaying ?? false;
 
     public double Position => player?.CurrentPosition ?? 0;
@@ -33,8 +40,7 @@ public class AudioService
 
     private double volume = 1.0;
 
-    public AudioService()
-    {
+    public AudioService() {
         timer = Application.Current!.Dispatcher.CreateTimer();
 
         timer.Interval = TimeSpan.FromMilliseconds(200);
@@ -44,8 +50,8 @@ public class AudioService
         timer.Start();
     }
 
-    private async void Timer_Tick(object? sender, EventArgs e)
-    {
+    //updates playback information
+    private async void Timer_Tick(object? sender, EventArgs e) {
         if (player == null)
             return;
 
@@ -58,13 +64,13 @@ public class AudioService
             await SongFinished();
     }
 
-    public void SetPlaylist(List<Song> songs)
-    {
+    //sets active playlist
+    public void SetPlaylist(List<Song> songs) {
         Playlist = songs;
     }
 
-    public async Task Play(Song song)
-    {
+    //plays selected song
+    public async Task Play(Song song) {
         StopInternal();
 
         CurrentSong = song;
@@ -78,15 +84,11 @@ public class AudioService
 
         player.Play();
 
+        //download cover if needed
         var settings = await new SettingsService().LoadAsync();
 
-        if (settings.DownloadAlbumArt &&
-            string.IsNullOrWhiteSpace(song.AlbumArt))
-        {
-            song.AlbumArt = await albumArtService.GetCoverUrlAsync(
-                song.Artist,
-                song.Album,
-                song.Title);
+        if (settings.DownloadAlbumArt && string.IsNullOrWhiteSpace(song.AlbumArt)) {
+            song.AlbumArt = await albumArtService.GetCoverUrlAsync(song.Artist, song.Album, song.Title);
 
             await libraryService.SaveLibraryAsync(Playlist);
         }
@@ -95,8 +97,8 @@ public class AudioService
         PlaybackUpdated?.Invoke();
     }
 
-    public void TogglePlayPause()
-    {
+    //pause or resume playback
+    public void TogglePlayPause() {
         if (player == null)
             return;
 
@@ -108,20 +110,20 @@ public class AudioService
         PlaybackUpdated?.Invoke();
     }
 
-    public void Pause()
-    {
+    public void Pause() {
         player?.Pause();
+
         PlaybackUpdated?.Invoke();
     }
 
-    public void Resume()
-    {
+    public void Resume() {
         player?.Play();
+
         PlaybackUpdated?.Invoke();
     }
 
-    public void Stop()
-    {
+    //stops playback
+    public void Stop() {
         StopInternal();
 
         CurrentSong = null;
@@ -131,8 +133,8 @@ public class AudioService
         PlaybackUpdated?.Invoke();
     }
 
-    private void StopInternal()
-    {
+    //releases player resources
+    private void StopInternal() {
         player?.Stop();
         player?.Dispose();
         player = null;
@@ -141,84 +143,77 @@ public class AudioService
         currentStream = null;
     }
 
-    public void Seek(double seconds)
-    {
-        if (player?.CanSeek == true)
-        {
-            player.Seek(seconds);
-            PlaybackUpdated?.Invoke();
-        }
+    //changes playback position
+    public void Seek(double seconds) {
+        if (player?.CanSeek != true)
+            return;
+
+        player.Seek(seconds);
+
+        PlaybackUpdated?.Invoke();
     }
 
-    public void SetVolume(double value)
-    {
+    //sets player volume
+    public void SetVolume(double value) {
         volume = value;
 
         if (player != null)
             player.Volume = value;
     }
 
-    public double GetVolume()
-    {
+    public double GetVolume() {
         return volume;
     }
 
-    public async Task Next()
-    {
+    //plays next song
+    public async Task Next() {
         if (Playlist.Count == 0)
             return;
 
-        if (Shuffle)
-        {
-            Random rnd = new();
+        if (Shuffle) {
+            Random random = new();
 
-            int next = rnd.Next(Playlist.Count);
+            int index = random.Next(Playlist.Count);
 
-            await Play(Playlist[next]);
+            await Play(Playlist[index]);
+
             return;
         }
 
-        if (CurrentIndex < Playlist.Count - 1)
-        {
+        if (CurrentIndex < Playlist.Count - 1) {
             await Play(Playlist[CurrentIndex + 1]);
+
             return;
         }
 
-        if (RepeatMode == 1)
-        {
+        if (RepeatMode == 1) {
             await Play(Playlist[0]);
         }
     }
 
-    public async Task Previous()
-    {
+    //plays previous song
+    public async Task Previous() {
         if (Playlist.Count == 0)
             return;
 
-        if (CurrentIndex > 0)
-        {
+        if (CurrentIndex > 0) {
             await Play(Playlist[CurrentIndex - 1]);
+
             return;
         }
 
-        if (RepeatMode == 1)
-        {
+        if (RepeatMode == 1) 
             await Play(Playlist[^1]);
-        }
     }
 
-    private async Task SongFinished()
-    {
-        switch (RepeatMode)
-        {
-            case 2:
-                if (CurrentSong != null)
-                    await Play(CurrentSong);
-                break;
+    //called when current song ends
+    private async Task SongFinished() {
+        if (RepeatMode == 2) {
+            if (CurrentSong != null)
+                await Play(CurrentSong);
 
-            default:
-                await Next();
-                break;
+            return;
         }
+        await Next();
     }
 }

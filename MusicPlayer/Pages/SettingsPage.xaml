@@ -17,6 +17,7 @@
                 FontSize="30"
                 FontAttributes="Bold"/>
 
+            <!-- theme -->
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -49,6 +50,7 @@
 
             </Border>
 
+            <!-- library -->
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -76,6 +78,7 @@
 
             </Border>
 
+            <!-- delete -->
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -107,6 +110,7 @@
 
             </Border>
 
+            <!-- album art -->
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -138,6 +142,7 @@
 
             </Border>
 
+            <!-- playback -->
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -199,7 +204,8 @@
                 </Grid>
 
             </Border>
-            
+
+            <!-- about -->
             <Border
                 Padding="15"
                 Stroke="#DDDDDD"
@@ -213,20 +219,15 @@
                         FontSize="18"
                         FontAttributes="Bold"/>
 
-                    <Label
-                        Text="Version 1.0"/>
+                    <Label Text="Version 1.0"/>
 
-                    <Label
-                        Text=".NET MAUI"/>
+                    <Label Text=".NET MAUI"/>
 
-                    <Label
-                        Text="Plugin.Maui.Audio"/>
+                    <Label Text="Plugin.Maui.Audio"/>
 
-                    <Label
-                        Text="ID3.NET"/>
+                    <Label Text="ID3.NET"/>
 
-                    <Label
-                        Text="by Artur Kondratiuk"/>
+                    <Label Text="by Artur Kondratiuk"/>
 
                 </VerticalStackLayout>
 
