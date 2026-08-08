@@ -3,9 +3,8 @@ using MusicPlayer.Services;
 
 namespace MusicPlayer.Pages;
 
-public partial class AddSongsPage : ContentPage
-{
-    //Playlist that will receive new songs
+public partial class AddSongsPage : ContentPage {
+    //playlist that will receive new songs
     private readonly Playlist playlist;
 
     //service for loading the music library
@@ -46,7 +45,9 @@ public partial class AddSongsPage : ContentPage
         LibraryEmptyState.IsVisible = false;
 
         //remove songs that are already in this playlist
-        library = allSongs.Where(song => !playlist.Songs.Any(p => p.FilePath == song.FilePath)).ToList();
+        library = allSongs
+            .Where(song => !playlist.Songs.Any(p => p.FilePath == song.FilePath))
+            .ToList();
 
         //display available songs
         SongsCollection.ItemsSource = library;
@@ -67,7 +68,9 @@ public partial class AddSongsPage : ContentPage
         Content.Opacity = 0;
         Content.TranslationY = 20;
 
-        await Task.WhenAll(Content.FadeTo(1, 220), Content.TranslateTo(0, 0, 220, Easing.CubicOut));
+        await Task.WhenAll(
+            Content.FadeTo(1, 220),
+            Content.TranslateTo(0, 0, 220, Easing.CubicOut));
     }
 
     //filter songs while typing
@@ -140,6 +143,21 @@ public partial class AddSongsPage : ContentPage
             if (!playlist.Songs.Any(s => s.FilePath == song.FilePath))
                 playlist.Songs.Add(song);
         }
+
+        var playlistService = new PlaylistService();
+
+        var playlists = await playlistService.LoadAsync();
+
+        var existingPlaylist = playlists.FirstOrDefault(
+            p => p.Name == playlist.Name);
+
+        if (existingPlaylist != null) {
+            existingPlaylist.Songs =
+                new System.Collections.ObjectModel.ObservableCollection<Song>(
+                    playlist.Songs);
+        }
+
+        await playlistService.SaveAsync(playlists);
 
         //return to the previous page
         await Navigation.PopAsync();
